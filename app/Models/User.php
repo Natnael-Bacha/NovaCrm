@@ -74,4 +74,9 @@ class User extends Authenticatable implements PasskeyUser
     {
         return $this->hasMany(Lead::class, 'agent_id');
     }
+
+    public function actions()
+{
+    return $this->hasMany(Action::class, 'assigned_to');
+}
 }

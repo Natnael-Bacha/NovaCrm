@@ -49,6 +49,7 @@ Route::get('/projects', 'showProjects')->name('projects.index');
 Route::get('/admin/unit', 'getUnits')->name('admin.units');
 Route::get('/admin/pipeline', 'getLeads')->name('admin.pipeline');
 Route::get('/admin/deal', 'getDeals')->name('admin.deals');
+Route::get('/admin/actions', 'getActions')->name('admin.actions');
 
 });
 
@@ -80,7 +81,11 @@ Route::post('/createDeal/{lead}', 'createDeal')->name('createDeal');
 Route::put('/updateDeal/{id}', 'updateDeal')->name('updateDeal');
 Route::delete('/deleteDeal/{deal}', 'deleteDeal')->name('deleteDeal');
 Route::put('/updateDealPaymentStatus/{deal}', 'updateDealPaymentStatus')->name('updateDealPaymentStatus');
-
+Route::post('/createAction/{lead}', 'createAction')->name('createAction');
+Route::put('/updateAction/{action}', 'updateAction')->name('updateAction');
+Route::delete('/actions/{action}', 'deleteAction')->name('deleteAction');
+Route::put('/updateActionActivity/{action}', 'updateActionActivity')->name('updateActionActivity');
+Route::put('/updateActionStatus/{action}', 'updateActionStatus')->name('updateActionStatus');
 });
 
 

@@ -27,5 +27,10 @@ class Lead extends Model
     public function deals(){
     return $this->hasMany(Deal::class);
     }
+
+    public function actions()
+{
+    return $this->hasMany(Action::class);
+}
 }
 

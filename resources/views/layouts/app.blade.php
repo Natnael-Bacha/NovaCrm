@@ -88,6 +88,13 @@
                     onmouseleave="if(this.style.backgroundColor === 'rgb(241, 245, 249)' || this.style.backgroundColor === '#f1f5f9') { this.style.backgroundColor='transparent'; this.style.color='#475569'; }">
                     Deals
                 </a>
+                   <a href="{{ route('admin.actions') }}"
+                    class="block px-4 py-2.5 rounded-md text-sm font-medium transition-colors duration-150"
+                    style="{{ $currentRoute == 'admin.actions' ? 'background-color: #0F286F; color: white;' : 'color: #475569;' }}"
+                    onmouseenter="if(!this.style.backgroundColor || this.style.backgroundColor === 'transparent') { this.style.backgroundColor='#f1f5f9'; this.style.color='#0F286F'; }"
+                    onmouseleave="if(this.style.backgroundColor === 'rgb(241, 245, 249)' || this.style.backgroundColor === '#f1f5f9') { this.style.backgroundColor='transparent'; this.style.color='#475569'; }">
+                    Actions
+                </a>
                 {{-- <a href="{{ route('reports') }}"
                     class="block px-4 py-2.5 rounded-md text-sm font-medium transition-colors duration-150"
                     style="{{ $currentRoute == 'reports' ? 'background-color: #0F286F; color: white;' : 'color: #475569;' }}"

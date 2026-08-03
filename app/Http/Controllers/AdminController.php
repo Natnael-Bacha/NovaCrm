@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Action;
 use App\Models\Deal;
 use App\Models\Lead;
 use App\Models\Project;
@@ -939,6 +940,116 @@ public function updateDealPaymentStatus(Request $request, Deal $deal)
         ->with('success', 'Payment status updated successfully!');
 }
 
+ public function createAction(Request $request, Lead $lead)
+    {
+        $validated = $request->validate([
+            'activity_type' => [
+                'required',
+                'in:follow_up_call,meeting,property_visit,email'
+            ],
+
+            'assigned_to' => [
+                'required',
+                'exists:users,id'
+            ],
+
+            'status' => [
+                'required',
+                'in:done,on_progress'
+            ],
+
+            'scheduled_time' => [
+                'required',
+                'date',
+                'after_or_equal:today'
+            ],
+
+            'description' => [
+                'nullable',
+                'string'
+            ],
+        ]);
+
+
+        Action::create([
+            'lead_id' => $lead->id,
+            'activity_type' => $validated['activity_type'],
+            'assigned_to' => $validated['assigned_to'],
+            'status' => $validated['status'],
+            'scheduled_time' => $validated['scheduled_time'],
+            'description' => $validated['description'],
+        ]);
+
+
+        return redirect()
+            ->back()
+            ->with('success', 'Action created successfully');
+    }
+
+    public function updateAction(Request $request, Action $action)
+{
+    $validated = $request->validate([
+        'lead_id'        => 'required|exists:leads,id',
+        'activity_type'  => 'required|in:follow_up_call,meeting,property_visit,email',
+        'assigned_to'    => 'required|exists:users,id',
+        'status'         => 'required|in:done,on_progress',
+        'scheduled_time' => 'required|date|after_or_equal:today',
+        'description'    => 'nullable|string',
+    ]);
+
+    $action->update([
+        'lead_id'        => $validated['lead_id'],
+        'activity_type'  => $validated['activity_type'],
+        'assigned_to'    => $validated['assigned_to'],
+        'status'         => $validated['status'],
+        'scheduled_time' => $validated['scheduled_time'],
+        'description'    => $validated['description'] ?? null,
+    ]);
+
+    return redirect()
+        ->back()
+        ->with('success', 'Action updated successfully.');
+} 
+
+   public function deleteAction(Action $action)
+{
+    $action->delete();
+
+    return redirect()
+        ->back()
+        ->with('success', 'Action deleted successfully.');
+}
+
+
+public function updateActionActivity(Request $request, Action $action)
+{
+    $validated = $request->validate([
+        'activity_type' => 'required|in:follow_up_call,meeting,property_visit,email',
+    ]);
+
+    $action->update([
+        'activity_type' => $validated['activity_type'],
+    ]);
+
+    return redirect()
+        ->back()
+        ->with('success', 'Activity type updated successfully.');
+}
+
+public function updateActionStatus(Request $request, Action $action)
+{
+    $validated = $request->validate([
+        'status' => 'required|in:done,on_progress',
+    ]);
+
+    $action->update([
+        'status' => $validated['status'],
+    ]);
+
+    return redirect()
+        ->back()
+        ->with('success', 'Status updated successfully.');
+}
 
 }
 
