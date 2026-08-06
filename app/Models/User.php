@@ -13,7 +13,9 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-
+use Filament\Panel;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
 #[Fillable([
     'full_name',
     'email',
@@ -30,7 +32,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
     'remember_token',
 ])]
 
-class User extends Authenticatable implements PasskeyUser
+class User extends Authenticatable implements PasskeyUser, FilamentUser, HasName
 {
     use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
@@ -78,5 +80,14 @@ class User extends Authenticatable implements PasskeyUser
     public function actions()
 {
     return $this->hasMany(Action::class, 'assigned_to');
+}   
+public function getFilamentName(): string
+{
+    return $this->full_name ?: $this->email;
 }
+   public function canAccessPanel(Panel $panel): bool
+{
+    return $this->role === 'admin';
+}
+
 }

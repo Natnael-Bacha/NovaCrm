@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminControllerGet;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'showLoginPage'])
@@ -87,6 +88,8 @@ Route::delete('/actions/{action}', 'deleteAction')->name('deleteAction');
 Route::put('/updateActionActivity/{action}', 'updateActionActivity')->name('updateActionActivity');
 Route::put('/updateActionStatus/{action}', 'updateActionStatus')->name('updateActionStatus');
 });
+
+
 
 
 
