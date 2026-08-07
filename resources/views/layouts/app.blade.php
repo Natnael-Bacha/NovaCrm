@@ -57,9 +57,9 @@
                     Leads
                 </a>
 
-                <a href="{{ route('getSupervisors') }}"
+                <a href="{{ route('team.index') }}"
                     class="block px-4 py-2.5 rounded-md text-sm font-medium transition-colors duration-150"
-                    style="{{ $currentRoute == 'getSupervisors' ? 'background-color: #0F286F; color: white;' : 'color: #475569;' }}"
+                    style="{{ $currentRoute == 'team.index' ? 'background-color: #0F286F; color: white;' : 'color: #475569;' }}"
                     onmouseenter="if(!this.style.backgroundColor || this.style.backgroundColor === 'transparent') { this.style.backgroundColor='#f1f5f9'; this.style.color='#0F286F'; }"
                     onmouseleave="if(this.style.backgroundColor === 'rgb(241, 245, 249)' || this.style.backgroundColor === '#f1f5f9') { this.style.backgroundColor='transparent'; this.style.color='#475569'; }">
                     Teams

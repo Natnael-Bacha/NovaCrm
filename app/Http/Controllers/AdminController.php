@@ -42,115 +42,11 @@ class AdminController extends Controller
 
 
 
-public function createUser(Request $request)
-{
-   
-    abort_if(Auth::user()->role !== 'admin', 403);
-
-   
-    $request->merge(
-        collect($request->all())
-            ->map(fn ($value) => is_string($value) ? strip_tags(trim($value)) : $value)
-            ->toArray()
-    );
-
-    $validated = $request->validate([
-        'full_name' => [
-            'required',
-            'string',
-            'max:255',
-        ],
-
-        'email' => [
-            'required',
-            'email',
-            'lowercase',
-            'max:255',
-            'unique:users,email',
-        ],
-
-        'password' => [
-            'required',
-            'string',
-            'min:8',
-            'confirmed',
-        ],
-
-        'role' => [
-            'required',
-            'in:admin,supervisor,agent,collector',
-        ],
-
-        'supervisor_id' => [
-            'nullable',
-            'exists:users,id',
-        ],
-
-        'monthly_target' => [
-            'required',
-            'integer',
-            'min:0',
-        ],
-    ]);
-
-    if ($validated['role'] !== 'agent') {
-        $validated['supervisor_id'] = null;
-    }
-
-  
-    if (
-        $validated['role'] === 'agent' &&
-        empty($validated['supervisor_id'])
-    ) {
-        return back()
-            ->withErrors([
-                'supervisor_id' => 'Please assign a supervisor.'
-            ])
-            ->withInput();
-    }
-
-    $validated['password'] = Hash::make($validated['password']);
-
-    User::create($validated);
-
-    return back()->with('success', 'User created successfully.');
-}
 
 
 
-public function updateRole(Request $request, $id)
-{
-    $validated = $request->validate([
-        'role' => 'required|in:admin,supervisor,agent,collector'
-    ]);
-
-    $user = User::findOrFail($id);
-
-  
-    if($user->role === 'supervisor' && $validated['role'] !== 'supervisor') {
-
-        $agents = $user->agents;
-
-        if($agents->count() > 0){
-
-            return redirect()->back()->with([
-                'error' => 'This supervisor has assigned agents. Please reassign them first.',
-                'supervisor_id' => $user->id,
-                'agents' => $agents
-            ]);
-        }
-    }
-    //    if ($validated['role'] !== 'agent') {
-    //     $validated['supervisor_id'] = null;
-    // }
-
-    $user->update([
-        'role' => $validated['role']
-    ]);
 
 
-    return redirect()->back()->with('success','Role updated successfully');
-}
 
 public function changeSupervisors(Request $request)
 {
@@ -171,7 +67,7 @@ public function changeSupervisors(Request $request)
         ]);
 
     return redirect()
-        ->route('getSupervisors')
+        ->route('team.index')
         ->with('success', 'Agents reassigned and role updated.');
 }
 
@@ -229,141 +125,9 @@ public function updateLeadStatus(Request $request, $id)
 
  
 
- public function updateUser(Request $request, $id)
-{
-    abort_if(Auth::user()->role !== 'admin', 403);
-
-    $user = User::findOrFail($id);
-
-    $request->merge(
-        collect($request->all())
-            ->map(fn ($value) => is_string($value) ? strip_tags(trim($value)) : $value)
-            ->toArray()
-    );
-
-    $validated = $request->validate([
-        'full_name' => [
-            'required',
-            'string',
-            'max:255',
-        ],
-
-        'email' => [
-            'required',
-            'email',
-            'lowercase',
-            'max:255',
-            Rule::unique('users')->ignore($user->id),
-        ],
-
-        'role' => [
-            'nullable',
-            'in:admin,supervisor,agent,collector',
-        ],
-
-        'supervisor_id' => [
-            'nullable',
-            'exists:users,id',
-        ],
-
-        'monthly_target' => [
-            'required',
-            'integer',
-            'min:0',
-        ],
-
-        'password' => [
-            'nullable',
-            'string',
-            'min:8',
-            'confirmed',
-        ],
-    ]);
-
-     if(!empty($validated['role'])){
-            if ($validated['role'] !== 'agent' ) {
-        $validated['supervisor_id'] = null;
-    }
-
-    
-    if (
-        $validated['role'] === 'agent' &&
-        empty($validated['supervisor_id'])
-    ) {
-        return back()
-            ->withErrors([
-                'supervisor_id' => 'Please assign a supervisor.'
-            ])
-            ->withInput();
-    }
-     }
-
-    if (!empty($validated['password'])) {
-        $validated['password'] = Hash::make($validated['password']);
-    } else {
-        unset($validated['password']);
-    }
 
 
-    $user->update($validated);
 
-    return redirect()->back()
-        ->with('success', 'User updated successfully.');
-}
-
-public function deleteUser(Request $request, $id)
-{
-    $user = User::findOrFail($id);
-    
-  
-    $isAjax = $request->ajax() || $request->wantsJson();
-    
-    if ($user->leads()->exists()) {
-        if (!$request->new_agent) {
-            if ($isAjax) {
-                return response()->json([
-                    'requires_reassignment' => true
-                ]);
-            }
-            return redirect()->back()->with('warning', 'This user has leads. Please select a new agent to reassign them.');
-        }
-
-        $newAgent = User::find($request->new_agent);
-        if (!$newAgent) {
-            if ($isAjax) {
-                return response()->json([
-                    'error' => 'Selected agent does not exist'
-                ], 422);
-            }
-            return redirect()->back()->with('error', 'Selected agent does not exist.');
-        }
-
-        DB::transaction(function() use ($user, $request) {
-            $user->leads()->update(['agent_id' => $request->new_agent]);
-            $user->delete();
-        });
-
-        if ($isAjax) {
-            return response()->json([
-                'success' => true,
-                'message' => 'User deleted and leads reassigned successfully'
-            ]);
-        }
-        
-        return redirect()->back()->with('success', 'User deleted and leads reassigned successfully');
-    }
-
-    $user->delete();
-
-    if ($isAjax) {
-        return response()->json([
-            'success' => true,
-            'message' => 'User deleted successfully'
-        ]);
-    }
-    
-    return redirect()->back()->with('success', 'User deleted successfully');
-}
 
 
 public function updateLead(Request $request, $id)

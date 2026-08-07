@@ -13,27 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminControllerGet extends Controller
 {
-public function getSupervisors()
-{
-    
-    if(Auth::user()->role !== 'admin'){
-        return redirect('/');
-    }
-  
-    $supervisors = User::supervisorsUsers()
-        ->select('id', 'full_name')
-        ->get();
-    
-    $agents = User::where('role', 'agent')
-        ->select('id', 'full_name')
-        ->get();
 
-    $teams = User::all();
-    
-    
-
-    return view('admin.team', compact('supervisors', 'teams', 'agents'));
-}
 
 public function getAgents(){
         if(Auth::user()->role !== 'admin'){

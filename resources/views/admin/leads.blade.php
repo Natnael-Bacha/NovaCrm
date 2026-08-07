@@ -391,8 +391,6 @@
         </button>
     </div>
 
-    
-
     <!-- STATS -->
     <div class="stat-grid">
         <div class="stat-card">
@@ -537,36 +535,25 @@
                                         <span x-text="hasDeal(lead.id) ? 'Has Deal' : '+ Add to Deal'"></span>
                                     </button>
 
-                                    <!-- Edit Button -->
+                                    <!-- Edit Button - always clickable, shows toast if pending -->
                                     <button 
                                         type="button"
                                         @click="openEditModal(lead)"
                                         class="action-btn edit-btn"
-                                        :class="{ 'opacity-50 pointer-events-none': hasPendingDeal(lead.id) }"
+                                        :class="{ 'opacity-50': hasPendingDeal(lead.id) }"
                                         :title="hasPendingDeal(lead.id) ? 'Cannot edit - pending deal' : 'Edit Lead'"
-                                        :disabled="hasPendingDeal(lead.id)"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                         </svg>
                                     </button>
 
-                                    <!-- Delete Button -->
+                                    <!-- Delete Button - always clickable, shows toast if pending -->
                                     <button 
                                         type="button"
-                                        @click="
-                                            if (hasPendingDeal(lead.id)) {
-                                                window.dispatchEvent(new CustomEvent('toast', {
-                                                    detail: { message: 'Cannot delete a lead with a pending deal.', type: 'error' }
-                                                }));
-                                                return;
-                                            }
-                                            showDeleteModal = true;
-                                            deleteLeadId = lead.id;
-                                            deleteLeadName = lead.full_name;
-                                        "
+                                        @click="openDeleteModal(lead)"
                                         class="action-btn delete-btn"
-                                        :class="{ 'opacity-50 pointer-events-none': hasPendingDeal(lead.id) }"
+                                        :class="{ 'opacity-50': hasPendingDeal(lead.id) }"
                                         :title="hasPendingDeal(lead.id) ? 'Cannot delete - pending deal' : 'Delete Lead'"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1196,9 +1183,6 @@
                         }));
                     });
                 @endif
-
-                // Debug: log initial state
-                console.log('Lead management initialized, editOpen:', this.editOpen);
             },
 
             hasDeal(leadId) {
@@ -1227,7 +1211,7 @@
                     return;
                 }
 
-                // Prevent editing if pending deal exists
+                // Check for pending deal – show toast and abort if pending
                 if (this.hasPendingDeal(lead.id)) {
                     console.log('Lead has pending deal, showing toast');
                     window.dispatchEvent(new CustomEvent('toast', {
@@ -1239,13 +1223,27 @@
                     return;
                 }
 
-                // Create a deep copy of the lead data to avoid reference issues
+                // Deep copy to avoid reference issues
                 this.editLead = JSON.parse(JSON.stringify(lead));
                 console.log('editLead set to:', this.editLead);
                 
-                // Set editOpen to true
                 this.editOpen = true;
                 console.log('editOpen set to:', this.editOpen);
+            },
+
+            openDeleteModal(lead) {
+                if (this.hasPendingDeal(lead.id)) {
+                    window.dispatchEvent(new CustomEvent('toast', {
+                        detail: { 
+                            message: 'Cannot delete a lead with a pending deal.', 
+                            type: 'error' 
+                        }
+                    }));
+                    return;
+                }
+                this.showDeleteModal = true;
+                this.deleteLeadId = lead.id;
+                this.deleteLeadName = lead.full_name;
             },
 
             openDealModal(lead) {
