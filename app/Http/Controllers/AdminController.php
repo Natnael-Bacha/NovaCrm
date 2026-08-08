@@ -68,85 +68,12 @@ public function getProjectData($id)
 
 
 
-public function createUnit(Request $request)
-{
-    $validated = $request->validate([
-        'project_id' => 'required|exists:projects,id',
-        'unit_number' => 'required|string|max:255|unique:units,unit_number',
-        'floor' => 'required|integer',
-        'unit_type' => 'required|in:apartment,penthouse,office_space,commercial,studio,duplex',
-        'size' => 'required|numeric',
-        'price' => 'required|numeric',
-        'status' => 'required|in:available,reserved,sold',
-    ]);
 
 
-    Unit::create($validated);
 
 
-    return redirect()
-        ->back()
-        ->with('success', 'Unit created successfully.');
-}
 
 
-public function updateUnit(Request $request, $id)
-{
-    $request->merge(
-        collect($request->all())
-            ->map(fn ($value) => is_string($value) ? strip_tags(trim($value)) : $value)
-            ->toArray()
-    );
-
-    abort_if(Auth::user()->role !== 'admin', 403);
-
-    $unit = Unit::findOrFail($id);
-
-    $validated = $request->validate([
-        'project_id' => 'required|exists:projects,id',
-        'unit_number' => [
-            'required',
-            'string',
-            'max:255',
-            Rule::unique('units')
-                ->where(fn ($query) => $query->where('project_id', $request->project_id))
-                ->ignore($unit->id),
-        ],
-        'floor' => 'required|integer|min:1',
-        'unit_type' => 'required|in:apartment,penthouse,office_space,commercial,studio,duplex',
-        'size' => 'required|numeric|min:0',
-        'price' => 'required|numeric|min:0',
-        'status' => 'required|in:available,reserved,sold',
-    ]);
-
-    $project = Project::findOrFail($validated['project_id']);
-
-    if ($validated['floor'] > $project->total_floors) {
-        return back()
-            ->withErrors([
-                'floor' => 'The selected floor exceeds the total floors of the project.'
-            ])
-            ->withInput();
-    }
-
-    $unit->update($validated);
-
-    return back()->with('success', 'Unit updated successfully.');
-}
-
-public function deleteUnit($id)
-{   
-    abort_if(Auth::user()->role !== 'admin', 403);
-    $unit = Unit::findorFail($id);
-    
-    if (!$unit){
-            return redirect()->back()->with('error', 'Project not found');
-    }
-    
-    $unit->delete();
-    
-    return redirect()->back()->with('success', 'Unit deleted successfully!');
-}
 
 
 // public function updateLeadStage(Request $request, $id)

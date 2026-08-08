@@ -2,9 +2,10 @@
 
 namespace App\Policies;
 
+use App\Models\Unit;
 use App\Models\User;
 
-class UserPolicy
+class UnitPolicy
 {
     public function viewAny(User $user): bool
     {
@@ -16,12 +17,12 @@ class UserPolicy
         return $user->role === 'admin';
     }
 
-    public function update(User $user, User $model): bool
+    public function update(User $user, Unit $unit): bool
     {
         return $user->role === 'admin';
     }
 
-    public function delete(User $user, User $model): bool
+    public function delete(User $user, Unit $unit): bool
     {
         return $user->role === 'admin';
     }

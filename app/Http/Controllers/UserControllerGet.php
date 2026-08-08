@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserControllerGet extends Controller
@@ -11,9 +10,7 @@ class UserControllerGet extends Controller
     public function index()
 {
     
-    if(Auth::user()->role !== 'admin'){
-        return redirect('/');
-    }
+    $this->authorize('viewAny', User::class);
   
     $supervisors = User::supervisorsUsers()
         ->select('id', 'full_name')

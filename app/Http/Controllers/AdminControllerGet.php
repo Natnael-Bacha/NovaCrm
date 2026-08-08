@@ -22,16 +22,7 @@ class AdminControllerGet extends Controller
  
  
 
- public function getUnits(){
-    if(Auth::user()->role !== 'admin'){
-        return redirect('/');
-    }
 
-    $units = Unit::all();
-    $projects = Project::all();
-
-    return view('admin.units', compact('units', 'projects'));
- }
 
 
 
