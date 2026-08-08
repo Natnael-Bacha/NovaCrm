@@ -12,10 +12,9 @@ use Illuminate\Support\Facades\Auth;
 
 class LeadControllerGet extends Controller
 {
-      public function getLeads(){
-    if(Auth::user()->role !== 'admin'){
-        return redirect('/');
-    }
+    public function getLeads(){
+   
+    $this->authorize('viewAny', Lead::class);
 
     $leads = Lead::all();
     
@@ -24,9 +23,9 @@ class LeadControllerGet extends Controller
  }
 
   public function index(){
-        if(Auth::user()->role !== 'admin'){
-        return redirect('/');
-    }
+    
+    $this->authorize('viewAny', Lead::class);
+
     $deals = Deal::with('lead')->get();
     $agents = User::agentsUsers()
         ->select('id', 'full_name')

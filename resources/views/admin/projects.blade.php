@@ -628,7 +628,7 @@
 
     // Confirm delete
     function confirmDelete(projectId) {
-        document.getElementById('deleteForm').action = `/updateProject/${projectId}`;
+        document.getElementById('deleteForm').action = `/deleteProject/${projectId}`;
         openModal('deleteModal');
     }
 

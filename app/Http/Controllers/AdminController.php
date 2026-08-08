@@ -52,71 +52,6 @@ public function changeSupervisors(Request $request)
 }
 
 
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-public function updateProject(Request $request, $id)
-{
-    $request->merge(
-        collect($request->all())
-            ->map(fn ($value) => is_string($value) ? strip_tags(trim($value)) : $value)
-            ->toArray()
-    );
-    
-    abort_if(Auth::user()->role !== 'admin', 403);
-    $project = Project::findOrFail($id);
-    
-    $rules = [
-        'project_manager' => ['required', 'string', 'min:3'],
-        'location_address' => ['required', 'string', 'min:3'],
-        'total_floors' => ['required', 'integer', 'min:1'],
-        'completed_floors' => ['required', 'integer', 'min:0'],
-        'total_units' => ['required', 'integer', 'min:1'],
-        'due_date' => ['required', 'date'],
-    ];
-
-    if ($request->project_name !== $project->project_name) {
-        $rules['project_name'] = [
-            'required',
-            'string',
-            'min:3',
-            Rule::unique('projects', 'project_name')->ignore($project->id),
-        ];
-    } else {
-        $rules['project_name'] = ['required', 'string', 'min:3'];
-    }
-    
-    $validated = $request->validate($rules);
-    
-    if ($validated['completed_floors'] > $validated['total_floors']) {
-        return redirect()->back()
-            ->withErrors([
-                'completed_floors' => 'Completed floors cannot exceed total floors.'
-            ])
-            ->withInput()
-            ->with('edit_error', true)
-            ->with('edit_project_id', $id);
-    }
-    
-    $project->update($validated);
-    
-    return redirect()->back()
-        ->with('success', 'Project updated successfully.');
-}
 public function getProjectData($id)
 {
     $project = Project::find($id);
@@ -131,19 +66,7 @@ public function getProjectData($id)
 
 
 
-public function deleteProject($id)
-{
-     abort_if(Auth::user()->role !== 'admin', 403);
-    $project = Project::findorFail($id);
-    
-    if (!$project) {
-        return redirect()->back()->with('error', 'Project not found');
-    }
-    
-    $project->delete();
-    
-    return redirect()->back()->with('success', 'Project deleted successfully!');
-}
+
 
 public function createUnit(Request $request)
 {

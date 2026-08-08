@@ -18,15 +18,7 @@ class AdminControllerGet extends Controller
 
 
 
- public function getProjects(){
-    if(Auth::user()->role !== 'admin'){
-        return redirect('/');
-    }
 
-    $projects = Project::all();
-
-    return view('admin.projects', compact('projects'));
- }
  
  
 

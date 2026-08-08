@@ -5,6 +5,8 @@ use App\Http\Controllers\AdminControllerGet;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LeadControllerGet;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectControllerGet;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserControllerGet;
 use Illuminate\Support\Facades\Auth;
@@ -48,7 +50,7 @@ Route::middleware('guest')->controller(AuthController::class)->group(function(){
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'role:admin'])->controller(AdminControllerGet::class)->group(function(){
-Route::get('/getProjects',  'getProjects')->name('getProjects');
+
 Route::get('/getUsers',  'getUsers')->name('getUsers');
 Route::get('/projects', 'showProjects')->name('projects.index');
 Route::get('/admin/unit', 'getUnits')->name('admin.units');
@@ -75,17 +77,21 @@ Route::put('/updateLeadStatus/{lead}',  'updateLeadStatus')->name('updateLeadSta
 Route::delete('/deleteLead/{lead}',  'deleteLead')->name('deleteLead');
 });
 
-Route::middleware(['auth', 'role:admin'])->controller(AdminController::class)->group(function(){
+
+Route::middleware(['auth', 'role:admin'])->controller(ProjectControllerGet::class)->group(function(){
+Route::get('/getProjects',  'getProjects')->name('getProjects');
+Route::get('/projects/{project}/edit',  'edit')->name('projects.edit');
+});
+
+Route::middleware(['auth', 'role:admin'])->controller(ProjectController::class)->group(function(){
 Route::post('/createProject', 'createProject')->name('createProject');
+Route::put('/updateProject/{project}', 'updateProject')->name('updateProject');
+Route::delete('/deleteProject/{project}', 'deleteProject')->name('deleteProject'); 
 });
 
 Route::middleware(['auth', 'role:admin'])->controller(AdminController::class)->group(function(){
 
 Route::put('/changeSupervisors', 'changeSupervisors')->name('changeSupervisors');
-
-Route::get('/projects/{id}/edit', 'getProjectData')->name('projects.edit');
-Route::put('/updateProject/{id}', 'updateProject')->name('updateProject');
-Route::delete('/updateProject/{id}', 'deleteProject')->name('deleteProject'); 
 Route::post('/createUnit', 'createUnit')->name('createUnit');
 Route::put('/updateUnit/{id}', 'updateUnit')->name('updateUnit');
 Route::delete('/deleteUnit/{id}',  'deleteUnit')->name('deleteUnit');
