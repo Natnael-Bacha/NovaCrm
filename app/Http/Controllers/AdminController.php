@@ -18,27 +18,7 @@ use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
-    public function createLead(Request $request){
-    $request->merge([
-    'full_name' => strip_tags($request->full_name),
-    'budget_range' => strip_tags($request->budget_range),
-    'preferred_location' => strip_tags($request->preferred_location),
-]);
 
- $validated = $request->validate([
-    'full_name'=>'required|string|max:255',
-    'email'=>'nullable|email',
-    'phone'=>'required|string|max:20',
-    'budget_range'=>'nullable|string|max:100',
-    'preferred_location'=>'nullable|string|max:255',
-    'lead_source'=>'required|in:website,social media,referral,walk_in,other',
-    'lead_type'=>'required|in:buyer,seller,tenant,investor',
-    'current_stage'=>'required|in:new,contacted,qualified,site visit,proposal sent,initial payment,completed,lost',
-    'agent_id'=>'nullable|exists:users,id'
-]);
-      Lead::create($validated);
-      return redirect()->route('leads');
-    }
 
 
 
@@ -71,56 +51,9 @@ public function changeSupervisors(Request $request)
         ->with('success', 'Agents reassigned and role updated.');
 }
 
-public function updateLeadStatus(Request $request, $id)
-{
-    $validated = $request->validate([
-        'current_stage' => 'required|in:new,contacted,qualified,site visit,proposal sent,initial payment,completed,lost'
-    ]);
 
-    $lead = Lead::findOrFail($id);
 
-    $lead->update([
-        'current_stage' => $validated['current_stage']
-    ]);
 
-    return redirect()->back()->with('success', 'Lead stage updated successfully');
-}
-
- public function createProject(Request $request)
-{
-
-  $request->merge(
-    collect($request->all())
-        ->map(fn ($value) => is_string($value) ? strip_tags(trim($value)) : $value)
-        ->toArray()
-);
-    $validated = $request->validate([
-        'project_name' => [
-            'required',
-            'string',
-            'min:3',
-            Rule::unique('projects', 'project_name'),
-        ],
-        'project_manager' => ['required', 'string', 'min:3'],
-        'location_address' => ['required', 'string', 'min:3'],
-        'total_floors' => ['required', 'integer', 'min:1'],
-        'completed_floors' => ['required', 'integer', 'min:0'],
-        'total_units' => ['required', 'integer', 'min:1'],
-        'due_date' => ['required', 'date'],
-    ]);
-
-    if ($validated['completed_floors'] > $validated['total_floors']) {
-    return back()
-        ->withErrors([
-            'completed_floors' => 'Completed floors cannot exceed total floors.'
-        ])
-        ->withInput();
-}
-
-    Project::create($validated);
-
-    return redirect()->back()->with('success', 'Project created successfully.');
-}
 
 
  
@@ -130,95 +63,11 @@ public function updateLeadStatus(Request $request, $id)
 
 
 
-public function updateLead(Request $request, $id)
-{
-    abort_if(Auth::user()->role !== 'admin', 403);
-
-    $lead = Lead::findOrFail($id);
-
-    $validated = $request->validate([
-
-        'full_name' => [
-            'required',
-            'string',
-            'max:255'
-        ],
-
-        'email' => [
-            'nullable',
-            'email',
-            'max:255',
-            'lowercase'
-        ],
-
-        'phone' => [
-            'required',
-            'string',
-            'max:20'
-        ],
-
-        'budget_range' => [
-            'nullable',
-            'string',
-            'max:100'
-        ],
-
-        'preferred_location' => [
-            'nullable',
-            'string',
-            'max:255'
-        ],
-
-        'lead_source' => [
-            'required',
-            'in:website,social media,referral,walk_in,other'
-        ],
-
-        'lead_type' => [
-            'required',
-            'in:buyer,seller,tenant,investor'
-        ],
-
-        'current_stage' => [
-            'required',
-            'in:new,contacted,qualified,site visit,proposal sent,initial payment,completed,lost'
-        ],
-
-        'agent_id' => [
-            'nullable',
-            Rule::exists('users','id')
-                ->where('role','agent')
-        ]
-    ]);
-
-
-    $lead->update($validated);
-
-
-    return redirect()->back()
-        ->with('success','Lead updated successfully.');
-}
 
 
 
-public function deleteLead($id)
-{
-    abort_if(Auth::user()->role !== 'admin', 403);
 
-    $lead = Lead::findOrFail($id);
 
-    DB::transaction(function () use ($lead) {
-
-       
-        Deal::where('lead_id', $lead->id)->delete();
-
-        $lead->delete();
-
-    });
-
-    return redirect()->back()
-        ->with('success', 'Lead deleted successfully.');
-}
 
 public function updateProject(Request $request, $id)
 {
@@ -377,24 +226,24 @@ public function deleteUnit($id)
 }
 
 
-public function updateLeadStage(Request $request, $id)
-{
-    try {
-        $lead = Lead::findOrFail($id);
-        $lead->current_stage = $request->stage;
-        $lead->save();
+// public function updateLeadStage(Request $request, $id)
+// {
+//     try {
+//         $lead = Lead::findOrFail($id);
+//         $lead->current_stage = $request->stage;
+//         $lead->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Lead stage updated successfully'
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to update lead stage: ' . $e->getMessage()
-        ], 500);
-    }
-}
+//         return response()->json([
+//             'success' => true,
+//             'message' => 'Lead stage updated successfully'
+//         ]);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Failed to update lead stage: ' . $e->getMessage()
+//         ], 500);
+//     }
+// }
 
 
 public function createDeal(Request $request, Lead $lead)

@@ -3,6 +3,8 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminControllerGet;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LeadController;
+use App\Http\Controllers\LeadControllerGet;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserControllerGet;
 use Illuminate\Support\Facades\Auth;
@@ -46,9 +48,6 @@ Route::middleware('guest')->controller(AuthController::class)->group(function(){
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'role:admin'])->controller(AdminControllerGet::class)->group(function(){
-
-Route::get('/admin/leads', 'getAgents')->name('leads');
-Route::get('/getLeads',  'getLeads')->name('getLeads');
 Route::get('/getProjects',  'getProjects')->name('getProjects');
 Route::get('/getUsers',  'getUsers')->name('getUsers');
 Route::get('/projects', 'showProjects')->name('projects.index');
@@ -63,28 +62,33 @@ Route::get('/admin/actions', 'getActions')->name('admin.actions');
 
 
 
-Route::middleware(['auth', 'role:admin'])->controller(UserController::class)->group(function(){
 
 
+Route::middleware(['auth', 'role:admin'])->controller(LeadControllerGet::class)->group(function(){
+Route::get('/getLeads',  'getLeads')->name('getLeads');
+Route::get('/admin/leads', 'index')->name('leads');
+});
+Route::middleware(['auth', 'role:admin'])->controller(LeadController::class)->group(function(){
+Route::post('/createlead', 'createLead')->name('createLead');
+Route::put('/updateLead/{lead}',  'updateLead')->name('updateLead');
+Route::put('/updateLeadStatus/{lead}',  'updateLeadStatus')->name('updateLeadStatus');
+Route::delete('/deleteLead/{lead}',  'deleteLead')->name('deleteLead');
 });
 
 Route::middleware(['auth', 'role:admin'])->controller(AdminController::class)->group(function(){
-Route::post('/createlead', 'createLead')->name('createLead');
-Route::put('/changeSupervisors', 'changeSupervisors')->name('changeSupervisors');
-Route::put('/updateLeadStatus/{id}',  'updateLeadStatus')->name('updateLeadStatus');
 Route::post('/createProject', 'createProject')->name('createProject');
+});
 
+Route::middleware(['auth', 'role:admin'])->controller(AdminController::class)->group(function(){
 
-Route::put('/updateLead/{id}',  'updateLead')->name('updateLead');
-Route::delete('/deleteLead/{id}',  'deleteLead')->name('deleteLead');
-Route::get('/getUserLeads/{id}',  'getUserLeads')->name('getUserLeads');
+Route::put('/changeSupervisors', 'changeSupervisors')->name('changeSupervisors');
+
 Route::get('/projects/{id}/edit', 'getProjectData')->name('projects.edit');
 Route::put('/updateProject/{id}', 'updateProject')->name('updateProject');
 Route::delete('/updateProject/{id}', 'deleteProject')->name('deleteProject'); 
 Route::post('/createUnit', 'createUnit')->name('createUnit');
 Route::put('/updateUnit/{id}', 'updateUnit')->name('updateUnit');
 Route::delete('/deleteUnit/{id}',  'deleteUnit')->name('deleteUnit');
-Route::put('/leads/{id}/stage', 'updateLeadStage')->name('updateLeadStage');
 Route::post('/createDeal/{lead}', 'createDeal')->name('createDeal');
 Route::put('/updateDeal/{id}', 'updateDeal')->name('updateDeal');
 Route::delete('/deleteDeal/{deal}', 'deleteDeal')->name('deleteDeal');

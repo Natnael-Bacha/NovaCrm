@@ -15,23 +15,7 @@ class AdminControllerGet extends Controller
 {
 
 
-public function getAgents(){
-        if(Auth::user()->role !== 'admin'){
-        return redirect('/');
-    }
-    $deals = Deal::with('lead')->get();
-    $agents = User::agentsUsers()
-        ->select('id', 'full_name')
-        ->orderBy('full_name', 'desc')
-        ->get();
-    $leads = Lead::with('agent')
-        ->orderBy('created_at', 'desc')
-        ->get();
-    $projects = Project::all();
-    $units = Unit::all();
-        
-    return view('admin.leads', compact('agents', 'leads', 'projects', 'units','deals'));
-}
+
 
 
  public function getProjects(){
@@ -58,16 +42,7 @@ public function getAgents(){
  }
 
 
-  public function getLeads(){
-    if(Auth::user()->role !== 'admin'){
-        return redirect('/');
-    }
 
-    $leads = Lead::all();
-    
-
-    return view('admin.pipeline', compact('leads'));
- }
  
  public function getDeals(){
     $deals = Deal::with(['lead', 'project', 'unit','collector'])->get()->map(function($deal) {

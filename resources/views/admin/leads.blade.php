@@ -360,7 +360,7 @@
 @section('content')
 
 <!-- Toast Container -->
-<div class="toast-container" x-data="toastManager()" x-init="init()" @toast.window="addToast($event.detail)">
+<div class="toast-container" x-data="toastManager()" x-init="init()">
     <template x-for="(toast, index) in toasts" :key="index">
         <div class="toast" :class="{
             'toast-success': toast.type === 'success',
@@ -489,9 +489,8 @@
                             <td class="px-6 py-4 text-gray-600 table-cell-align" x-text="lead.phone"></td>
                             <td class="px-6 py-4 text-gray-600 table-cell-align" x-text="lead.preferred_location"></td>
                             <td class="px-6 py-4 table-cell-align">
-                                <!-- Show pending badge instead of dropdown for pending deals -->
                                 <template x-if="hasPendingDeal(lead.id)">
-                                    <span class="text-red-500">Pending...</span>
+                                    <span class="pending-badge">Pending</span>
                                 </template>
                                 <template x-if="!hasPendingDeal(lead.id)">
                                     <form method="POST" :action="'{{ url('/updateLeadStatus') }}/' + lead.id" class="stage-form">
@@ -524,7 +523,6 @@
                             </td>
                             <td class="px-6 py-4 table-cell-align">
                                 <div class="action-group">
-                                    <!-- Add to Deal Button with + icon - Disabled if lead has deal -->
                                     <button 
                                         type="button"
                                         @click="openDealModal(lead)"
@@ -535,7 +533,6 @@
                                         <span x-text="hasDeal(lead.id) ? 'Has Deal' : '+ Add to Deal'"></span>
                                     </button>
 
-                                    <!-- Edit Button - always clickable, shows toast if pending -->
                                     <button 
                                         type="button"
                                         @click="openEditModal(lead)"
@@ -548,7 +545,6 @@
                                         </svg>
                                     </button>
 
-                                    <!-- Delete Button - always clickable, shows toast if pending -->
                                     <button 
                                         type="button"
                                         @click="openDeleteModal(lead)"
@@ -1072,21 +1068,24 @@
 </div>
 
 <script>
+    // Toast Manager Component
     function toastManager() {
         return {
             toasts: [],
-            lastToast: null, // track last toast to avoid duplicates
-            init() {},
+            init() {
+                // Expose a global function for other components to call directly
+                window.addToast = (message, type = 'success') => this.addToast({message, type});
+            },
             addToast({ message, type = 'success' }) {
-                // Deduplicate: if the same message and type were added within the last 2 seconds, skip
+                // Deduplicate identical toasts within 2 seconds
                 const now = Date.now();
-                if (this.lastToast && 
-                    this.lastToast.message === message && 
-                    this.lastToast.type === type && 
-                    (now - this.lastToast.timestamp) < 2000) {
+                if (this._lastToast &&
+                    this._lastToast.message === message &&
+                    this._lastToast.type === type &&
+                    (now - this._lastToast.timestamp) < 2000) {
                     return;
                 }
-                this.lastToast = { message, type, timestamp: now };
+                this._lastToast = { message, type, timestamp: now };
                 this.toasts.push({ message, type });
             },
             removeToast(index) {
@@ -1105,7 +1104,6 @@
 
     function leadManagement() {
         return {
-            // State
             open: false,
             editOpen: false,
             editLead: null,
@@ -1138,7 +1136,6 @@
             },
             filteredUnits: [],
 
-            // Computed properties
             get filteredLeads() {
                 return this.leads.filter(lead => {
                     if (this.selectedStage && lead.current_stage !== this.selectedStage) return false;
@@ -1146,43 +1143,33 @@
                     return true;
                 });
             },
-            get totalLeads() { 
-                return this.leads.length; 
-            },
-            get newLeads() { 
-                return this.leads.filter(l => l.current_stage === 'new').length; 
-            },
-            get completedLeads() { 
-                return this.leads.filter(l => l.current_stage === 'completed').length; 
-            },
-            get activeLeads() { 
-                return this.leads.filter(l => ['contacted','qualified','site visit','proposal sent','initial payment'].includes(l.current_stage)).length; 
-            },
+            get totalLeads() { return this.leads.length; },
+            get newLeads() { return this.leads.filter(l => l.current_stage === 'new').length; },
+            get completedLeads() { return this.leads.filter(l => l.current_stage === 'completed').length; },
+            get activeLeads() { return this.leads.filter(l => ['contacted','qualified','site visit','proposal sent','initial payment'].includes(l.current_stage)).length; },
 
-            // Methods
             init() {
-                // Handle any flash messages
-                @if(session('success'))
-                    this.$nextTick(() => {
-                        window.dispatchEvent(new CustomEvent('toast', {
-                            detail: { message: '{{ session('success') }}', type: 'success' }
-                        }));
-                    });
-                @endif
-                @if(session('error'))
-                    this.$nextTick(() => {
-                        window.dispatchEvent(new CustomEvent('toast', {
-                            detail: { message: '{{ session('error') }}', type: 'error' }
-                        }));
-                    });
-                @endif
-                @if($errors->any())
-                    this.$nextTick(() => {
-                        window.dispatchEvent(new CustomEvent('toast', {
-                            detail: { message: '{{ $errors->first() }}', type: 'error' }
-                        }));
-                    });
-                @endif
+                // Wait for Alpine to finish initializing, then call the global toast function directly
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        // Now the window.addToast function is guaranteed to exist (from toastManager)
+                        @if(session('success'))
+                            if (typeof window.addToast === 'function') {
+                                window.addToast('{{ session('success') }}', 'success');
+                            }
+                        @endif
+                        @if(session('error'))
+                            if (typeof window.addToast === 'function') {
+                                window.addToast('{{ session('error') }}', 'error');
+                            }
+                        @endif
+                        @if($errors->any())
+                            if (typeof window.addToast === 'function') {
+                                window.addToast('{{ $errors->first() }}', 'error');
+                            }
+                        @endif
+                    }, 100);
+                });
             },
 
             hasDeal(leadId) {
@@ -1204,41 +1191,18 @@
             },
 
             openEditModal(lead) {
-                console.log('openEditModal called with lead:', lead);
-                
-                if (!lead) {
-                    console.error('Lead is undefined');
-                    return;
-                }
-
-                // Check for pending deal – show toast and abort if pending
+                if (!lead) return;
                 if (this.hasPendingDeal(lead.id)) {
-                    console.log('Lead has pending deal, showing toast');
-                    window.dispatchEvent(new CustomEvent('toast', {
-                        detail: { 
-                            message: 'Cannot edit a lead with a pending deal.', 
-                            type: 'error' 
-                        }
-                    }));
+                    this.showErrorToast('Cannot edit a lead with a pending deal.');
                     return;
                 }
-
-                // Deep copy to avoid reference issues
                 this.editLead = JSON.parse(JSON.stringify(lead));
-                console.log('editLead set to:', this.editLead);
-                
                 this.editOpen = true;
-                console.log('editOpen set to:', this.editOpen);
             },
 
             openDeleteModal(lead) {
                 if (this.hasPendingDeal(lead.id)) {
-                    window.dispatchEvent(new CustomEvent('toast', {
-                        detail: { 
-                            message: 'Cannot delete a lead with a pending deal.', 
-                            type: 'error' 
-                        }
-                    }));
+                    this.showErrorToast('Cannot delete a lead with a pending deal.');
                     return;
                 }
                 this.showDeleteModal = true;
@@ -1247,19 +1211,10 @@
             },
 
             openDealModal(lead) {
-                console.log('Opening deal modal for:', lead.full_name);
-                
-                // Check if lead already has a deal before opening
                 if (this.hasDeal(lead.id)) {
-                    window.dispatchEvent(new CustomEvent('toast', {
-                        detail: { 
-                            message: 'This lead already has an associated deal.', 
-                            type: 'error' 
-                        }
-                    }));
+                    this.showErrorToast('This lead already has an associated deal.');
                     return;
                 }
-
                 this.dealLeadId = lead.id;
                 this.dealLeadName = lead.full_name;
                 this.dealForm = {
@@ -1282,7 +1237,7 @@
 
             updateUnits() {
                 if (this.dealForm.project_id) {
-                    this.filteredUnits = this.units.filter(unit => 
+                    this.filteredUnits = this.units.filter(unit =>
                         unit.project_id == this.dealForm.project_id && unit.status === 'available'
                     );
                 } else {
@@ -1294,31 +1249,22 @@
             validateDeal() {
                 const downPayment = parseFloat(this.dealForm.down_payment) || 0;
                 const dealAmount = parseFloat(this.dealForm.deal_amount) || 0;
-                
                 if (downPayment > dealAmount) {
                     alert('Down payment cannot exceed the deal amount.');
                     return false;
                 }
-                
-                if (!this.dealForm.project_id) {
-                    alert('Please select a project.');
-                    return false;
-                }
-                
-                if (!this.dealForm.unit_id) {
-                    alert('Please select a unit.');
-                    return false;
-                }
-                
-                if (!this.dealForm.collector_id) {
-                    alert('Please select a collector.');
-                    return false;
-                }
-                
+                if (!this.dealForm.project_id) { alert('Please select a project.'); return false; }
+                if (!this.dealForm.unit_id) { alert('Please select a unit.'); return false; }
+                if (!this.dealForm.collector_id) { alert('Please select a collector.'); return false; }
                 return true;
+            },
+
+            showErrorToast(message) {
+                if (typeof window.addToast === 'function') {
+                    window.addToast(message, 'error');
+                }
             }
         };
     }
 </script>
-
 @endsection

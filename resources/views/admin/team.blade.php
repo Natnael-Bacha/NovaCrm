@@ -770,6 +770,9 @@
                     @csrf
                     @method('PUT')
 
+                    <!-- Hidden role field - always sent with current value -->
+                    <input type="hidden" name="role" id="editRoleHidden">
+
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
                             <label class="input-label">Full Name *</label>
@@ -779,6 +782,11 @@
                         <div>
                             <label class="input-label">Email *</label>
                             <input type="email" name="email" id="editEmail" class="input-field" required>
+                        </div>
+
+                        <div>
+                            <label class="input-label">Monthly Target</label>
+                            <input type="number" name="monthly_target" id="editMonthlyTarget" class="input-field" step="0.01">
                         </div>
 
                         <div class="md:col-span-2">
@@ -806,11 +814,6 @@
                                     </svg>
                                 </button>
                             </div>
-                        </div>
-
-                        <div>
-                            <label class="input-label">Monthly Target</label>
-                            <input type="number" name="monthly_target" id="editMonthlyTarget" class="input-field">
                         </div>
 
                         <div class="md:col-span-2">
@@ -894,7 +897,7 @@
                                 <option value="admin">Admin</option>
                                 <option value="supervisor">Supervisor</option>
                                 <option value="agent" selected>Agent</option>
-                                <option value="collector" selected>Collector</option>
+                                <option value="collector">Collector</option>
                             </select>
                         </div>
 
@@ -1052,6 +1055,8 @@
             document.getElementById('editForm').action = `/updateUser/${user.id}`;
             document.getElementById('editFullName').value = user.full_name || '';
             document.getElementById('editEmail').value = user.email || '';
+            // Set the hidden role field
+            document.getElementById('editRoleHidden').value = user.role || 'agent';
             document.getElementById('editMonthlyTarget').value = user.monthly_target || 0;
             document.getElementById('editSupervisorId').value = user.supervisor_id || '';
             // Clear password fields
