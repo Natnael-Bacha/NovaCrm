@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminControllerGet;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DealController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LeadControllerGet;
 use App\Http\Controllers\ProjectController;
@@ -95,15 +96,21 @@ Route::put('/updateUnit/{unit}', 'updateUnit')->name('updateUnit');
 Route::delete('/deleteUnit/{unit}',  'deleteUnit')->name('deleteUnit');
 });
 
+Route::middleware(['auth', 'role:admin'])->controller(DealController::class)->group(function(){
+  Route::post('/createDeal/{lead}', 'createDeal')->name('createDeal');
+  Route::put('/updateDeal/{deal}', 'updateDeal')->name('updateDeal');
+  Route::delete('/deleteDeal/{deal}', 'deleteDeal')->name('deleteDeal');
+  Route::put('/updateDealPaymentStatus/{deal}', 'updateDealPaymentStatus')->name('updateDealPaymentStatus');
+});
 
 
 Route::middleware(['auth', 'role:admin'])->controller(AdminController::class)->group(function(){
 
 Route::put('/changeSupervisors', 'changeSupervisors')->name('changeSupervisors');
-Route::post('/createDeal/{lead}', 'createDeal')->name('createDeal');
-Route::put('/updateDeal/{id}', 'updateDeal')->name('updateDeal');
-Route::delete('/deleteDeal/{deal}', 'deleteDeal')->name('deleteDeal');
-Route::put('/updateDealPaymentStatus/{deal}', 'updateDealPaymentStatus')->name('updateDealPaymentStatus');
+
+
+
+
 Route::post('/createAction/{lead}', 'createAction')->name('createAction');
 Route::put('/updateAction/{action}', 'updateAction')->name('updateAction');
 Route::delete('/actions/{action}', 'deleteAction')->name('deleteAction');
