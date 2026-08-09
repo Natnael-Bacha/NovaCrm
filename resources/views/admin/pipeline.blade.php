@@ -276,14 +276,14 @@
                                 <div class="lead-actions flex justify-end gap-2 mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-100" onclick="event.stopPropagation();">
                                     {{-- Back button: show on all except 'new' --}}
                                     @if($stageKey != 'new')
-                                    <button class="move-left bg-transparent border border-gray-200 rounded-lg px-2 sm:px-3 py-0.5 sm:py-1 text-[0.65rem] sm:text-xs cursor-pointer transition-colors text-gray-600 hover:bg-gray-100 hover:border-gray-400 active:scale-95" onclick="moveLead({{ $lead->id }}, 'left', this)">
+                                    <button type="button" class="move-left bg-transparent border border-gray-200 rounded-lg px-2 sm:px-3 py-0.5 sm:py-1 text-[0.65rem] sm:text-xs cursor-pointer transition-colors text-gray-600 hover:bg-gray-100 hover:border-gray-400 active:scale-95" onclick="moveLead({{ $lead->id }}, 'left', this)">
                                         ← Back
                                     </button>
                                     @endif
 
                                     {{-- Next button: hide ONLY on 'lost' --}}
                                     @if($stageKey != 'lost')
-                                    <button class="move-right bg-transparent border border-gray-200 rounded-lg px-2 sm:px-3 py-0.5 sm:py-1 text-[0.65rem] sm:text-xs cursor-pointer transition-colors text-gray-600 hover:bg-[#0F286F] hover:text-white hover:border-[#0F286F] active:scale-95" onclick="moveLead({{ $lead->id }}, 'right', this)">
+                                    <button type="button" class="move-right bg-transparent border border-gray-200 rounded-lg px-2 sm:px-3 py-0.5 sm:py-1 text-[0.65rem] sm:text-xs cursor-pointer transition-colors text-gray-600 hover:bg-[#0F286F] hover:text-white hover:border-[#0F286F] active:scale-95" onclick="moveLead({{ $lead->id }}, 'right', this)">
                                         Next →
                                     </button>
                                     @endif
@@ -327,8 +327,8 @@
 </div>
 
 <script>
-    // Store leads data
-    const leadsData = @json($leads);
+    // Store leads data – this is now mutable so we can keep it in sync
+    let leadsData = @json($leads);
 
     // Stage order
     const stageOrder = ['new', 'contacted', 'qualified', 'site_visit', 'proposal_sent', 'initial_payment', 'completed', 'lost'];
@@ -435,7 +435,7 @@
         document.getElementById('statCompletedValue').textContent = completedCount;
     }
 
-    // Update buttons – FIXED: Next button hidden ONLY for 'lost'
+    // Update buttons on a card based on its new stage
     function updateCardButtons(cardElement, stageKey) {
         const actions = cardElement.querySelector('.lead-actions');
         if (!actions) return;
@@ -448,6 +448,7 @@
         // Back button: show if not first
         if (!isFirst) {
             const backBtn = document.createElement('button');
+            backBtn.type = 'button';
             backBtn.className = 'move-left bg-transparent border border-gray-200 rounded-lg px-2 sm:px-3 py-0.5 sm:py-1 text-[0.65rem] sm:text-xs cursor-pointer transition-colors text-gray-600 hover:bg-gray-100 hover:border-gray-400 active:scale-95';
             backBtn.textContent = '← Back';
             backBtn.onclick = function(e) {
@@ -460,6 +461,7 @@
         // Next button: show if NOT lost
         if (!isLost) {
             const nextBtn = document.createElement('button');
+            nextBtn.type = 'button';
             nextBtn.className = 'move-right bg-transparent border border-gray-200 rounded-lg px-2 sm:px-3 py-0.5 sm:py-1 text-[0.65rem] sm:text-xs cursor-pointer transition-colors text-gray-600 hover:bg-[#0F286F] hover:text-white hover:border-[#0F286F] active:scale-95';
             nextBtn.textContent = 'Next →';
             nextBtn.onclick = function(e) {
@@ -522,6 +524,9 @@
         }, 300);
     }
 
+    // ============================================================
+    //  MOVE LEAD – fixed redirect handling + updates leadsData array
+    // ============================================================
     function moveLead(leadId, direction, buttonElement) {
         if (isMoving) {
             showToast('Please wait, moving...', 'error');
@@ -559,33 +564,35 @@
         }
 
         isMoving = true;
+
+        // Update UI optimistically
         smoothMoveLead(leadId, currentKey, newKey, direction);
 
-        fetch(`/leads/${leadId}/stage`, {
+        // Send request – follow redirects (your controller returns redirect)
+        fetch(`/updateLeadStatus/${leadId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
-            body: JSON.stringify({ stage: newDbValue })
+            body: JSON.stringify({ current_stage: newDbValue }),
+            redirect: 'follow'   // <-- changed from 'manual' to 'follow'
         })
         .then(response => {
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
+            // After following redirects, the final response should be 200 OK
+            if (response.ok) {
                 showToast(`✓ Moved to ${stageLabels[newKey]}`, 'success');
+                // 🔁 Update the local leadsData so next move works from the correct stage
                 lead.current_stage = newDbValue;
             } else {
-                showToast(data.message || 'Failed to move lead', 'error');
-                setTimeout(() => window.location.reload(), 1000);
+                throw new Error(`Unexpected response: ${response.status}`);
             }
         })
         .catch(error => {
             console.error('Error:', error);
             showToast('Failed to move lead: ' + error.message, 'error');
-            setTimeout(() => window.location.reload(), 1000);
+            // Reload to reset any inconsistent UI state
+            window.location.reload();
         })
         .finally(() => {
             isMoving = false;

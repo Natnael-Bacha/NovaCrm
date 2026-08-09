@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChangeSupervisorRequest;
 use App\Http\Requests\DeleteUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -144,5 +145,26 @@ public function deleteUser(DeleteUserRequest $request, User $user)
     }
     
     return redirect()->back()->with('success', 'User deleted successfully');
+}  
+
+  public function changeSupervisors(ChangeSupervisorRequest $request)
+{   
+
+    $this->authorize('changeSupervisor', User::class);
+    $validated = $request->validated();
+
+    User::where('supervisor_id', $validated['old_supervisor'])
+        ->update([
+            'supervisor_id' => $validated['new_supervisor']
+        ]);
+
+    User::findOrFail($validated['old_supervisor'])
+        ->update([
+            'role' => $validated['new_role']
+        ]);
+
+    return redirect()
+        ->route('team.index')
+        ->with('success', 'Agents reassigned and role updated.');
 }
 }

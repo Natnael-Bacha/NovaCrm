@@ -654,7 +654,7 @@
 
             <div class="border-t-2 border-[#0F286F] pt-4 mt-6 flex justify-end gap-3">
                 <button type="button" @click="deleteOpen=false" class="bg-white text-[#0F286F] border-2 border-[#0F286F] px-6 py-2.5 rounded-xl font-medium hover:bg-[#f0f4ff] transition cursor-pointer">Cancel</button>
-                <form method="POST" :action="`{{ url('/actions') }}/${deleteActionId}`">
+                <form method="POST" :action="`{{ url('/deleteAction') }}/${deleteActionId}`">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="bg-red-600 text-white px-6 py-2.5 rounded-xl font-medium hover:opacity-90 transition border-none cursor-pointer">Delete Action</button>

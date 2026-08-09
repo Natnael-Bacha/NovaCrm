@@ -34,17 +34,25 @@ class LeadController extends Controller
 }
 
 
-public function updateLeadStatus(UpdateLeadStatusRequest $request,Lead $lead)
-{   
+
+public function updateLeadStatus(UpdateLeadStatusRequest $request, Lead $lead)
+{
     $this->authorize('update', $lead);
+
     $validated = $request->validated();
 
     $lead->update([
-        'current_stage' => $validated['current_stage']
+        'current_stage' => $validated['current_stage'],
     ]);
 
-    return redirect()->back()->with('success', 'Lead stage updated successfully');
+    return response()->json([
+        'success' => true,
+        'message' => 'Lead stage updated successfully',
+        'current_stage' => $lead->current_stage,
+    ]);
 }
+
+
 
 public function deleteLead(Lead $lead)
 {
