@@ -23,7 +23,7 @@ class ActionController extends Controller
             'assigned_to' => $validated['assigned_to'],
             'status' => $validated['status'],
             'scheduled_time' => $validated['scheduled_time'],
-            'description' => $validated['description'],
+            'description' => $validated['description'] ?? null,
         ]);
 
 
