@@ -98,7 +98,7 @@
         viewOpen: false,
         
         // Data
-        actions: {{ json_encode($actions ?? []) }},
+        actions: {{ json_encode($actions->items()) }},
         leads: {{ json_encode($leads ?? []) }},
         users: {{ json_encode($users ?? []) }},
         
@@ -220,6 +220,21 @@
                 'email': 'Email'
             };
             return labels[type] || type;
+        },
+        getAssignedUserName(action) {
+            // 1. Try the eager-loaded relation, whatever it's called (assignedUser / assigned_user)
+            if (action.assignedUser && action.assignedUser.full_name) {
+                return action.assignedUser.full_name;
+            }
+            if (action.assigned_user && action.assigned_user.full_name) {
+                return action.assigned_user.full_name;
+            }
+            // 2. Fall back to looking the id up in the users list already loaded on this page
+            if (action.assigned_to) {
+                const match = this.users.find(u => String(u.id) === String(action.assigned_to));
+                if (match) return match.full_name;
+            }
+            return 'N/A';
         }
     }"
     x-init="
@@ -388,7 +403,7 @@
                                 </form>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="text-gray-700" x-text="action.assigned_user ? action.assigned_user.full_name : 'N/A'"></span>
+                                <span class="text-gray-700" x-text="getAssignedUserName(action)"></span>
                             </td>
                             <td class="px-6 py-4">
                                 <!-- INLINE UPDATE FOR STATUS -->
@@ -433,7 +448,10 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </div>  
+
+    <!-- PAGINATION LINKS -->
+     {{ $actions->links('vendor.pagination.custom') }}
 
     <!-- ============================================= -->
     <!-- CREATE ACTION MODAL                           -->

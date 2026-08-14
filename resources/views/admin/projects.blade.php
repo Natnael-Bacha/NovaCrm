@@ -132,7 +132,11 @@
             <p class="text-gray-400 text-xs sm:text-sm mt-1">Click "New Project" to create your first project</p>
         </div>
         @endforelse
+
     </div>
+
+    <!-- PAGINATION LINKS -->
+     {{ $projects->links('vendor.pagination.custom') }}
 
     <!-- Create Project Modal -->
     <div id="createModal" class="modal-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 @if($errors->any() && !session('edit_error')) active @endif">

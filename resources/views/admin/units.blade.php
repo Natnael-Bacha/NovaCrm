@@ -133,7 +133,7 @@
     <!-- Units Grid -->
     <div id="unitsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         @forelse($units as $unit)
-        <div class="group transition-all duration-200 ease-in-out border border-gray-200 rounded-xl p-4 sm:p-6 bg-white relative hover:-translate-y-0.5 hover:shadow-lg hover:border-[#0F286F]"
+        <div class="unit-card group transition-all duration-200 ease-in-out border border-gray-200 rounded-xl p-4 sm:p-6 bg-white relative hover:-translate-y-0.5 hover:shadow-lg hover:border-[#0F286F]"
              data-unit-id="{{ $unit->id }}" data-project-id="{{ $unit->project_id }}" data-floor="{{ $unit->floor }}" data-status="{{ $unit->status }}">
             <div class="absolute top-2 right-2 sm:top-3 sm:right-3 flex gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <button onclick="openEditModal({{ $unit->id }})"
@@ -186,6 +186,9 @@
         </div>
         @endforelse
     </div>
+
+    <!-- PAGINATION LINKS -->
+     {{ $units->links('vendor.pagination.custom') }}
 
     <!-- No Results Message -->
     <div id="noResults" class="text-center py-8 sm:py-12" style="display: none;">
@@ -578,7 +581,7 @@
 
 <script>
     // Store all units data from the server
-    const unitsData = @json($units);
+    const unitsData = @json($units->items()); // Fixed: extract items from paginator
     const projectsData = @json($projects);
 
     // Function to update floor dropdown options in create/edit modals

@@ -475,6 +475,64 @@
         .text-brand {
             color: #0F286F;
         }
+
+        /* Responsive additions */
+        @media (max-width: 640px) {
+            .modal-overlay {
+                padding: 0.75rem;
+            }
+            .modal-content,
+            .modal-content.wide {
+                padding: 1rem;
+                max-width: 100%;
+            }
+            .modal-header {
+                padding-bottom: 0.75rem;
+                margin-bottom: 1rem;
+            }
+            .modal-footer {
+                padding-top: 0.75rem;
+                margin-top: 1rem;
+            }
+            .modal-title {
+                font-size: 1.1rem;
+            }
+            .toast-container {
+                max-width: calc(100% - 2rem);
+                bottom: 1rem;
+                right: 1rem;
+                gap: 0.5rem;
+            }
+            .toast {
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+            }
+            .input-field {
+                padding: 0.5rem 0.75rem;
+            }
+            .btn-primary,
+            .btn-secondary,
+            .btn-danger {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            .info-box {
+                padding: 0.75rem;
+            }
+            .role-select-wrapper select {
+                font-size: 0.65rem;
+                padding: 0.25rem 1.75rem 0.25rem 0.7rem;
+                min-width: 80px;
+            }
+            .action-btn svg {
+                width: 18px;
+                height: 18px;
+            }
+            .agents-badge {
+                font-size: 0.65rem;
+                padding: 0.15rem 0.5rem;
+            }
+        }
     </style>
 @endpush
 
@@ -483,16 +541,16 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <div class="p-6 md:p-10">
+    <div class="p-4 md:p-6 lg:p-10">
 
         <!-- HEADER -->
-        <div class="flex justify-between items-center mb-8">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 md:mb-8">
             <div>
-                <h1 class="text-3xl font-bold brand">Manage Teams</h1>
-                <p class="text-gray-500 mt-2">Create and manage admins, supervisors, and sales agents.</p>
+                <h1 class="text-2xl md:text-3xl font-bold brand">Manage Teams</h1>
+                <p class="text-gray-500 mt-2 text-sm md:text-base">Create and manage admins, supervisors, and sales agents.</p>
             </div>
             <button onclick="document.getElementById('addUserModal').classList.add('active')" 
-                    class="brand-bg text-white px-6 py-3 rounded-xl hover:opacity-90 transition">
+                    class="brand-bg text-white px-6 py-3 rounded-xl hover:opacity-90 transition w-full md:w-auto">
                 + Add User
             </button>
         </div>
@@ -500,29 +558,29 @@
         <!-- TEAM MEMBERS TABLE -->
         <div class="bg-white rounded-2xl shadow overflow-hidden">
 
-            <div class="p-6 border-b">
-                <h2 class="text-xl font-semibold">Team Members</h2>
+            <div class="p-4 md:p-6 border-b">
+                <h2 class="text-lg md:text-xl font-semibold">Team Members</h2>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full">
+                <table class="w-full" style="min-width: 900px;">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Target</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Supervisor</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Assigned Agents</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                            <th class="px-4 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
+                            <th class="px-4 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+                            <th class="px-4 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role</th>
+                            <th class="px-4 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Target</th>
+                            <th class="px-4 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Supervisor</th>
+                            <th class="px-4 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Assigned Agents</th>
+                            <th class="px-4 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($teams as $team)
                         <tr class="border-b hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-medium">{{ $team->full_name }}</td>
-                            <td class="px-6 py-4 text-gray-600">{{ $team->email }}</td>
-                            <td class="px-6 py-4">
+                            <td class="px-4 py-3 md:px-6 md:py-4 font-medium">{{ $team->full_name }}</td>
+                            <td class="px-4 py-3 md:px-6 md:py-4 text-gray-600">{{ $team->email }}</td>
+                            <td class="px-4 py-3 md:px-6 md:py-4">
                                 <form action="{{ route('updateRole', $team->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('PUT')
@@ -536,17 +594,17 @@
                                     </div>
                                 </form>
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-4 py-3 md:px-6 md:py-4">
                                 <span class="font-medium">{{ $team->monthly_target ?? 0 }}</span>
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-4 py-3 md:px-6 md:py-4">
                                 @if($team->supervisor)
                                 <span class="text-sm font-medium">{{ $team->supervisor->full_name }}</span>
                                 @else
                                 <span class="text-gray-400 text-sm">—</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-4 py-3 md:px-6 md:py-4">
                                 @if($team->role == 'supervisor')
                                 <span class="agents-badge">
                                     <span class="count">{{ $team->agents->count() }}</span>
@@ -556,7 +614,7 @@
                                 <span class="text-gray-400 text-sm">—</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-4 py-3 md:px-6 md:py-4">
                                 <div class="action-group">
                                     <button 
                                         onclick="openEditModal({{ json_encode([
@@ -595,7 +653,9 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+
+            <!-- Pagination -->
+          {{ $teams->links('vendor.pagination.custom') }}
 
         <!-- DELETE CONFIRMATION MODAL -->
         <div class="modal-overlay" id="deleteModal">
@@ -623,14 +683,14 @@
                     </div>
                 </div>
 
-                <div class="modal-footer flex justify-end gap-3">
-                    <button type="button" onclick="closeModal('deleteModal')" class="btn-secondary">
+                <div class="modal-footer flex flex-col sm:flex-row justify-end gap-3">
+                    <button type="button" onclick="closeModal('deleteModal')" class="btn-secondary w-full sm:w-auto">
                         Cancel
                     </button>
                     <form id="deleteForm" method="POST" action="">
                         @csrf
                         @method('PUT')
-                        <button type="submit" class="btn-danger" id="deleteButton">
+                        <button type="submit" class="btn-danger w-full sm:w-auto" id="deleteButton">
                             Delete User
                         </button>
                     </form>
@@ -679,11 +739,11 @@
 
                     <div id="reassignError" class="hidden mb-4 p-3 bg-red-50 border-2 border-red-500 rounded-lg text-red-700 text-sm"></div>
 
-                    <div class="modal-footer flex justify-end gap-3">
-                        <button type="button" onclick="closeModal('reassignModal')" class="btn-secondary">
+                    <div class="modal-footer flex flex-col sm:flex-row justify-end gap-3">
+                        <button type="button" onclick="closeModal('reassignModal')" class="btn-secondary w-full sm:w-auto">
                             Cancel
                         </button>
-                        <button type="submit" id="reassignSubmitBtn" class="btn-primary">
+                        <button type="submit" id="reassignSubmitBtn" class="btn-primary w-full sm:w-auto">
                             Reassign & Delete
                         </button>
                     </div>
@@ -742,11 +802,11 @@
                         </select>
                     </div>
 
-                    <div class="modal-footer flex justify-end gap-3">
-                        <button type="button" onclick="document.getElementById('reassignSupervisorModal').classList.remove('active')" class="btn-secondary">
+                    <div class="modal-footer flex flex-col sm:flex-row justify-end gap-3">
+                        <button type="button" onclick="document.getElementById('reassignSupervisorModal').classList.remove('active')" class="btn-secondary w-full sm:w-auto">
                             Cancel
                         </button>
-                        <button type="submit" class="btn-primary">
+                        <button type="submit" class="btn-primary w-full sm:w-auto">
                             Reassign Agents
                         </button>
                     </div>
@@ -828,11 +888,11 @@
                         </div>
                     </div>
 
-                    <div class="modal-footer flex justify-end gap-3">
-                        <button type="button" onclick="closeModal('editModal')" class="btn-secondary">
+                    <div class="modal-footer flex flex-col sm:flex-row justify-end gap-3">
+                        <button type="button" onclick="closeModal('editModal')" class="btn-secondary w-full sm:w-auto">
                             Cancel
                         </button>
-                        <button type="submit" class="btn-primary">
+                        <button type="submit" class="btn-primary w-full sm:w-auto">
                             Update User
                         </button>
                     </div>
@@ -918,11 +978,11 @@
                         </div>
                     </div>
 
-                    <div class="modal-footer flex justify-end gap-3">
-                        <button type="button" onclick="closeModal('addUserModal')" class="btn-secondary">
+                    <div class="modal-footer flex flex-col sm:flex-row justify-end gap-3">
+                        <button type="button" onclick="closeModal('addUserModal')" class="btn-secondary w-full sm:w-auto">
                             Cancel
                         </button>
-                        <button type="submit" class="btn-primary">
+                        <button type="submit" class="btn-primary w-full sm:w-auto">
                             Add User
                         </button>
                     </div>

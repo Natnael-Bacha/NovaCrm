@@ -12,7 +12,7 @@ class ActionControllerGet extends Controller
 public function getActions()
 {    
     $this->authorize('viewAny', Action::class);
-    $actions = Action::with(['lead', 'assignedUser'])->get();
+    $actions = Action::with(['lead', 'assignedUser'])->paginate(2);
     $leads = Lead::select('id', 'full_name')->get();
     $users = User::select('id', 'full_name')->get();
 

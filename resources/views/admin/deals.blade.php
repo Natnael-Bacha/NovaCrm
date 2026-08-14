@@ -422,12 +422,12 @@
 <div 
     x-data="{
         editOpen: false,
-        editDeal: null,
+        editDeal: {},
         viewOpen: false,
         viewDeal: null,
         filterPaymentStatus: '',
         filterProject: '',
-        deals: {{ json_encode($deals ?? []) }},
+        deals: {{ json_encode($deals->items()) }},
         projects: {{ json_encode($projects ?? []) }},
         showDeleteModal: false,
         deleteDealId: null,
@@ -457,10 +457,11 @@
             return this.filterPaymentStatus !== '' || this.filterProject !== '';
         },
         openEditModal(deal) {
-            if (deal.start_date) {
-                deal.start_date = new Date(deal.start_date).toISOString().split('T')[0];
+            // clone so we don't mutate the row in the table until the form actually submits
+            this.editDeal = JSON.parse(JSON.stringify(deal));
+            if (this.editDeal.start_date) {
+                this.editDeal.start_date = new Date(this.editDeal.start_date).toISOString().split('T')[0];
             }
-            this.editDeal = deal;
             this.editOpen = true;
         },
         openViewModal(deal) {
@@ -716,7 +717,8 @@
             </table>
         </div>
     </div>
-
+   <!-- PAGINATION LINKS -->
+     {{ $deals->links('vendor.pagination.custom') }}
     <!-- ============================================= -->
     <!-- DELETE MODAL – with inline style to prevent flash -->
     <!-- ============================================= -->

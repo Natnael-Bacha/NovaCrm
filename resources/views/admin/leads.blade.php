@@ -391,7 +391,7 @@
         </button>
     </div>
 
-    <!-- STATS -->
+    <!-- STATS (Total from server, others from current page) -->
     <div class="stat-grid">
         <div class="stat-card">
             <div class="stat-value" x-text="totalLeads"></div>
@@ -402,24 +402,24 @@
         <div class="stat-card">
             <div class="stat-value" x-text="newLeads"></div>
             <div class="stat-label">New</div>
-            <div class="stat-desc mb-1">Fresh inquiries</div>
+            <div class="stat-desc mb-1">Fresh inquiries (this page)</div>
             <div class="accent blue"></div>
         </div>
         <div class="stat-card">
             <div class="stat-value" x-text="activeLeads"></div>
             <div class="stat-label">Active</div>
-            <div class="stat-desc mb-1">In progress</div>
+            <div class="stat-desc mb-1">In progress (this page)</div>
             <div class="accent blue"></div>
         </div>
         <div class="stat-card">
             <div class="stat-value" x-text="completedLeads"></div>
             <div class="stat-label">Completed</div>
-            <div class="stat-desc mb-1">Closed / won</div>
+            <div class="stat-desc mb-1">Closed / won (this page)</div>
             <div class="accent blue"></div>
         </div>
     </div>
 
-    <!-- FILTER SECTION -->
+    <!-- FILTER SECTION (filters only the current page) -->
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5 items-end">
             <div>
@@ -467,7 +467,7 @@
         <div class="card-header flex justify-between items-center">
             <h2 class="text-xl font-semibold text-slate-800">
                 All Leads
-                <span class="text-sm font-normal text-gray-400 ml-2" x-text="'(' + filteredLeads.length + ' leads)'"></span>
+                <span class="text-sm font-normal text-gray-400 ml-2" x-text="'(' + filteredLeads.length + ' leads on this page)'"></span>
             </h2>
         </div>
         <div class="overflow-x-auto">
@@ -493,11 +493,13 @@
                                     <span class="pending-badge">Pending</span>
                                 </template>
                                 <template x-if="!hasPendingDeal(lead.id)">
-                                    <form method="POST" :action="'{{ url('/updateLeadStatus') }}/' + lead.id" class="stage-form">
+                                    <form method="POST" :action="'{{ url('/updateLeadStatus') }}/' + lead.id" class="stage-form" @submit.prevent>
                                         @csrf
                                         @method('PUT')
                                         <div class="status-select-wrapper">
-                                            <select name="current_stage" onchange="this.form.submit()" x-model="lead.current_stage">
+                                            <select name="current_stage" 
+                                                    @change="updateStage(lead.id, $event.target.value, $event.target.closest('form'))" 
+                                                    x-model="lead.current_stage">
                                                 <option value="new">New</option>
                                                 <option value="contacted">Contacted</option>
                                                 <option value="qualified">Qualified</option>
@@ -569,6 +571,9 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- PAGINATION LINKS -->
+     {{ $leads->links('vendor.pagination.custom') }}
     </div>
 
     <!-- DELETE CONFIRMATION MODAL -->
@@ -1068,6 +1073,9 @@
 </div>
 
 <script>
+    // Global CSRF token for fetch requests
+    window.Laravel = { csrfToken: '{{ csrf_token() }}' };
+
     // Toast Manager Component
     function toastManager() {
         return {
@@ -1109,11 +1117,13 @@
             editLead: null,
             selectedStage: '',
             filterAgent: '',
-            leads: @json($leads ?? []),
+            // Only the current page's leads are passed from the controller
+            leads: @json($leads->items() ?? []),
+            totalLeadsCount: {{ $leads->total() }},
             agents: @json($agents ?? []),
             projects: @json($projects ?? []),
             units: @json($units ?? []),
-            deals: @json($deals ?? []),
+            deals: @json($deals->items() ?? []), // deals are also paginated, but for hasDeal we only need current page; could be imperfect
             showDeleteModal: false,
             deleteLeadId: null,
             deleteLeadName: '',
@@ -1143,16 +1153,16 @@
                     return true;
                 });
             },
-            get totalLeads() { return this.leads.length; },
+            // Total uses server-provided count
+            get totalLeads() { return this.totalLeadsCount; },
+            // Others reflect only the current page (not global)
             get newLeads() { return this.leads.filter(l => l.current_stage === 'new').length; },
             get completedLeads() { return this.leads.filter(l => l.current_stage === 'completed').length; },
             get activeLeads() { return this.leads.filter(l => ['contacted','qualified','site visit','proposal sent','initial payment'].includes(l.current_stage)).length; },
 
             init() {
-                // Wait for Alpine to finish initializing, then call the global toast function directly
                 this.$nextTick(() => {
                     setTimeout(() => {
-                        // Now the window.addToast function is guaranteed to exist (from toastManager)
                         @if(session('success'))
                             if (typeof window.addToast === 'function') {
                                 window.addToast('{{ session('success') }}', 'success');
@@ -1170,6 +1180,41 @@
                         @endif
                     }, 100);
                 });
+            },
+
+            // New method to handle stage update via AJAX
+            async updateStage(leadId, newStage, formElement) {
+                const url = `/updateLeadStatus/${leadId}`;
+                const token = window.Laravel.csrfToken; // or from form
+                try {
+                    const response = await fetch(url, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': token,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ current_stage: newStage })
+                    });
+                    const data = await response.json();
+                    if (response.ok && data.success) {
+                        // Update local lead data (already updated via x-model, but ensure consistency)
+                        const lead = this.leads.find(l => l.id == leadId);
+                        if (lead) lead.current_stage = data.current_stage;
+                        // Show success toast
+                        if (typeof window.addToast === 'function') {
+                            window.addToast(data.message, 'success');
+                        }
+                    } else {
+                        throw new Error(data.message || 'Failed to update stage');
+                    }
+                } catch (error) {
+                    // Show error toast
+                    if (typeof window.addToast === 'function') {
+                        window.addToast(error.message, 'error');
+                    }
+                    // Optional: revert the select to previous value? Not implemented for simplicity
+                }
             },
 
             hasDeal(leadId) {

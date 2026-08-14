@@ -22,21 +22,32 @@ class LeadControllerGet extends Controller
     return view('admin.pipeline', compact('leads'));
  }
 
-  public function index(){
-    
+public function index()
+{
     $this->authorize('viewAny', Lead::class);
 
-    $deals = Deal::with('lead')->get();
+    $deals = Deal::with('lead')
+        ->orderBy('created_at', 'desc')
+        ->paginate(10, ['*'], 'deals_page');
+
     $agents = User::agentsUsers()
         ->select('id', 'full_name')
         ->orderBy('full_name', 'desc')
         ->get();
+
     $leads = Lead::with('agent')
         ->orderBy('created_at', 'desc')
-        ->get();
+        ->paginate(5, ['*'], 'leads_page');
+
     $projects = Project::all();
     $units = Unit::all();
-        
-    return view('admin.leads', compact('agents', 'leads', 'projects', 'units','deals'));
+
+    return view('admin.leads', compact(
+        'agents',
+        'leads',
+        'projects',
+        'units',
+        'deals'
+    ));
 }
 }

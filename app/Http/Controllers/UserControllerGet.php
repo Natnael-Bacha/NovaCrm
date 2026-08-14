@@ -7,23 +7,27 @@ use Illuminate\Support\Facades\Auth;
 
 class UserControllerGet extends Controller
 {
-    public function index()
+public function index()
 {
-    
     $this->authorize('viewAny', User::class);
-  
+
     $supervisors = User::supervisorsUsers()
         ->select('id', 'full_name')
+        ->orderBy('full_name')
         ->get();
-    
+
     $agents = User::where('role', 'agent')
         ->select('id', 'full_name')
+        ->orderBy('full_name')
         ->get();
 
-    $teams = User::all();
-    
-    
+    $teams = User::orderBy('created_at', 'desc')
+        ->paginate(4);
 
-    return view('admin.team', compact('supervisors', 'teams', 'agents'));
+    return view('admin.team', compact(
+        'supervisors',
+        'teams',
+        'agents'
+    ));
 }
 }
