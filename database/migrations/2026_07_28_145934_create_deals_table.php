@@ -32,16 +32,14 @@ return new class extends Migration
                 ->constrained('users')
                 ->nullOnDelete();
 
-            
             $table->decimal('deal_amount', 15, 2);
             $table->decimal('down_payment', 15, 2)->default(0);
 
-           
             $table->enum('payment_cycle', [
                 'monthly',
                 'quarterly',
                 'semi_annually',
-                'annually'
+                'annually',
             ]);
 
             $table->unsignedInteger('number_of_installments');
@@ -53,20 +51,20 @@ return new class extends Migration
             // Commission
             $table->enum('commission_type', [
                 'percentage',
-                'fixed_amount'
+                'fixed_amount',
             ]);
 
             $table->decimal('commission_value', 15, 2);
 
             $table->enum('beneficiary', [
                 'internal_agent',
-                'external_agent'
+                'external_agent',
             ]);
 
             $table->enum('commission_trigger', [
                 'immediate',
                 'each_payment',
-                'full_payment'
+                'full_payment',
             ]);
 
             $table->timestamps();

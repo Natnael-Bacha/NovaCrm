@@ -1,11 +1,10 @@
 <?php
 
-use App\Models\Action;
 use App\Models\Lead;
 use App\Models\User;
 
 it('allows an admin to create an action', function () {
-    
+
     $admin = User::factory()->create([
         'role' => 'admin',
     ]);
@@ -21,7 +20,6 @@ it('allows an admin to create an action', function () {
         'current_stage' => 'new',
     ]);
 
-    
     $response = $this->actingAs($admin)->post(
         route('createAction', $lead),
         [
@@ -33,7 +31,6 @@ it('allows an admin to create an action', function () {
         ]
     );
 
-    
     $response->assertRedirect();
 
     $response->assertSessionHas(
@@ -49,7 +46,6 @@ it('allows an admin to create an action', function () {
         'description' => 'Follow up with the customer about the property.',
     ]);
 });
-
 
 it('rejects an invalid activity type when creating an action', function () {
     $admin = User::factory()->create([
@@ -81,8 +77,8 @@ it('rejects an invalid activity type when creating an action', function () {
     $response->assertSessionHasErrors('activity_type');
 
     $this->assertDatabaseMissing('actions', [
-    'lead_id' => $lead->id,
-]);
+        'lead_id' => $lead->id,
+    ]);
 });
 
 it('prevents a non-admin from creating an action', function () {
@@ -119,7 +115,6 @@ it('prevents a non-admin from creating an action', function () {
     ]);
 });
 
-
 it('requires all required fields when creating an action', function () {
     $admin = User::factory()->create([
         'role' => 'admin',
@@ -152,7 +147,6 @@ it('requires all required fields when creating an action', function () {
         'lead_id' => $lead->id,
     ]);
 });
-
 
 it('rejects an invalid assigned user when creating an action', function () {
     $admin = User::factory()->create([
@@ -188,7 +182,6 @@ it('rejects an invalid assigned user when creating an action', function () {
     ]);
 });
 
-
 it('rejects an invalid status when creating an action', function () {
     $admin = User::factory()->create([
         'role' => 'admin',
@@ -223,7 +216,6 @@ it('rejects an invalid status when creating an action', function () {
     ]);
 });
 
-
 it('rejects a scheduled time in the past when creating an action', function () {
     $admin = User::factory()->create([
         'role' => 'admin',
@@ -257,7 +249,6 @@ it('rejects a scheduled time in the past when creating an action', function () {
         'lead_id' => $lead->id,
     ]);
 });
-
 
 it('allows an action to be created without a description', function () {
     $admin = User::factory()->create([
@@ -296,7 +287,6 @@ it('allows an action to be created without a description', function () {
     ]);
 });
 
-
 it('strips HTML tags from action input when creating an action', function () {
     $admin = User::factory()->create([
         'role' => 'admin',
@@ -331,5 +321,3 @@ it('strips HTML tags from action input when creating an action', function () {
         'description' => 'Call the customer',
     ]);
 });
-
-

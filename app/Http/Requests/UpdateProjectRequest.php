@@ -78,8 +78,7 @@ class UpdateProjectRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'completed_floors.lte' =>
-                'Completed floors cannot exceed total floors.',
+            'completed_floors.lte' => 'Completed floors cannot exceed total floors.',
         ];
     }
 }

@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('project_id')
-                  ->constrained()
-                  ->cascadeOnDelete();
+            $table->foreignId('project_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
             $table->string('unit_number');
             $table->integer('floor');
@@ -26,19 +26,17 @@ return new class extends Migration
                 'office_space',
                 'commercial',
                 'studio',
-                'duplex'
+                'duplex',
             ]);
 
-          
             $table->decimal('size', 8, 2);
 
-       
             $table->decimal('price', 15, 2);
 
             $table->enum('status', [
                 'available',
                 'reserved',
-                'sold'
+                'sold',
             ])->default('available');
 
             $table->timestamps();

@@ -10,14 +10,16 @@ class StoreLeadRequest extends FormRequest
     {
         return true;
     }
+
     protected function prepareForValidation(): void
-{
-    $this->merge([
-        'full_name' => strip_tags($this->full_name),
-        'budget_range' => strip_tags($this->budget_range),
-        'preferred_location' => strip_tags($this->preferred_location),
-    ]);
-}
+    {
+        $this->merge([
+            'full_name' => strip_tags($this->full_name),
+            'budget_range' => strip_tags($this->budget_range),
+            'preferred_location' => strip_tags($this->preferred_location),
+        ]);
+    }
+
     public function rules(): array
     {
         return [

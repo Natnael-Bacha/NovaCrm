@@ -65,26 +65,6 @@
         </button>
     </div>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-        <div class="bg-white rounded-xl p-4 sm:p-6 border border-gray-100">
-            <div class="text-2xl sm:text-3xl font-bold text-[#0F286F]">{{ $units->count() }}</div>
-            <div class="text-xs sm:text-sm text-gray-500 mt-0.5">Total Units</div>
-        </div>
-        <div class="bg-white rounded-xl p-4 sm:p-6 border border-gray-100">
-            <div class="text-2xl sm:text-3xl font-bold text-[#0F286F]">{{ $units->where('status', 'available')->count() }}</div>
-            <div class="text-xs sm:text-sm text-gray-500 mt-0.5">Available</div>
-        </div>
-        <div class="bg-white rounded-xl p-4 sm:p-6 border border-gray-100">
-            <div class="text-2xl sm:text-3xl font-bold text-[#0F286F]">{{ $units->where('status', 'reserved')->count() }}</div>
-            <div class="text-xs sm:text-sm text-gray-500 mt-0.5">Reserved</div>
-        </div>
-        <div class="bg-white rounded-xl p-4 sm:p-6 border border-gray-100">
-            <div class="text-2xl sm:text-3xl font-bold text-[#0F286F]">{{ $units->where('status', 'sold')->count() }}</div>
-            <div class="text-xs sm:text-sm text-gray-500 mt-0.5">Sold</div>
-        </div>
-    </div>
-
     <!-- Filters -->
     <div class="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 mb-4 sm:mb-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">

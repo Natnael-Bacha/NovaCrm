@@ -7,47 +7,45 @@ use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Unit;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class LeadControllerGet extends Controller
 {
-    public function getLeads(){
-   
-    $this->authorize('viewAny', Lead::class);
+    public function getLeads()
+    {
 
-    $leads = Lead::all();
-    
+        $this->authorize('viewAny', Lead::class);
 
-    return view('admin.pipeline', compact('leads'));
- }
+        $leads = Lead::all();
 
-public function index()
-{
-    $this->authorize('viewAny', Lead::class);
+        return view('admin.pipeline', compact('leads'));
+    }
 
-    $deals = Deal::with('lead')
-        ->orderBy('created_at', 'desc')
-        ->paginate(10, ['*'], 'deals_page');
+    public function index()
+    {
+        $this->authorize('viewAny', Lead::class);
 
-    $agents = User::agentsUsers()
-        ->select('id', 'full_name')
-        ->orderBy('full_name', 'desc')
-        ->get();
+        $deals = Deal::with('lead')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10, ['*'], 'deals_page');
 
-    $leads = Lead::with('agent')
-        ->orderBy('created_at', 'desc')
-        ->paginate(5, ['*'], 'leads_page');
+        $agents = User::agentsUsers()
+            ->select('id', 'full_name')
+            ->orderBy('full_name', 'desc')
+            ->get();
 
-    $projects = Project::all();
-    $units = Unit::all();
+        $leads = Lead::with('agent')
+            ->orderBy('created_at', 'desc')
+            ->paginate(5, ['*'], 'leads_page');
 
-    return view('admin.leads', compact(
-        'agents',
-        'leads',
-        'projects',
-        'units',
-        'deals'
-    ));
-}
+        $projects = Project::all();
+        $units = Unit::all();
+
+        return view('admin.leads', compact(
+            'agents',
+            'leads',
+            'projects',
+            'units',
+            'deals'
+        ));
+    }
 }

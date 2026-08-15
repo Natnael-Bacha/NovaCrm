@@ -9,20 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up(): void
-{
-    Schema::create('projects', function (Blueprint $table) {
-        $table->id();
-        $table->string('project_name');
-        $table->string('project_manager');
-        $table->string('location_address');
-        $table->integer('total_floors');
-        $table->integer('completed_floors')->default(0);
-        $table->integer('total_units');
-        $table->date('due_date');
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::create('projects', function (Blueprint $table) {
+            $table->id();
+            $table->string('project_name');
+            $table->string('project_manager');
+            $table->string('location_address');
+            $table->integer('total_floors');
+            $table->integer('completed_floors')->default(0);
+            $table->integer('total_units');
+            $table->date('due_date');
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

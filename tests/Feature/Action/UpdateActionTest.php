@@ -4,7 +4,6 @@ use App\Models\Action;
 use App\Models\Lead;
 use App\Models\User;
 
-
 it('allows an admin to update an action', function () {
 
     $admin = User::factory()->create([
@@ -60,7 +59,6 @@ it('allows an admin to update an action', function () {
     ]);
 });
 
-
 it('prevents a non-admin from updating an action', function () {
 
     $admin = User::factory()->create([
@@ -113,7 +111,6 @@ it('prevents a non-admin from updating an action', function () {
     ]);
 });
 
-
 it('rejects an invalid activity type when updating an action', function () {
 
     $admin = User::factory()->create([
@@ -159,7 +156,6 @@ it('rejects an invalid activity type when updating an action', function () {
         'activity_type' => 'follow_up_call',
     ]);
 });
-
 
 it('rejects an invalid assigned user when updating an action', function () {
 
@@ -207,7 +203,6 @@ it('rejects an invalid assigned user when updating an action', function () {
     ]);
 });
 
-
 it('rejects an invalid status when updating an action', function () {
 
     $admin = User::factory()->create([
@@ -253,7 +248,6 @@ it('rejects an invalid status when updating an action', function () {
         'status' => 'on_progress',
     ]);
 });
-
 
 it('rejects a scheduled time in the past when updating an action', function () {
 
@@ -301,7 +295,6 @@ it('rejects a scheduled time in the past when updating an action', function () {
     ]);
 });
 
-
 it('allows an action to be updated without a description', function () {
 
     $admin = User::factory()->create([
@@ -348,7 +341,6 @@ it('allows an action to be updated without a description', function () {
         'description' => null,
     ]);
 });
-
 
 it('strips HTML tags when updating an action', function () {
 

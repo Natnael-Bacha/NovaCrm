@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StoreUnitRequest extends FormRequest
 {
@@ -42,7 +41,7 @@ class StoreUnitRequest extends FormRequest
             'floor' => [
                 'required',
                 'integer',
-                 'min:1',
+                'min:1',
             ],
 
             'unit_type' => [
@@ -53,13 +52,13 @@ class StoreUnitRequest extends FormRequest
             'size' => [
                 'required',
                 'numeric',
-                 'min:0',
+                'min:0',
             ],
 
             'price' => [
                 'required',
                 'numeric',
-                 'min:0',
+                'min:0',
             ],
 
             'status' => [

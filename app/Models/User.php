@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,9 +15,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use Filament\Panel;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasName;
+
 #[Fillable([
     'full_name',
     'email',
@@ -32,7 +32,7 @@ use Filament\Models\Contracts\HasName;
     'remember_token',
 ])]
 
-class User extends Authenticatable implements PasskeyUser, FilamentUser, HasName
+class User extends Authenticatable implements FilamentUser, HasName, PasskeyUser
 {
     use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
@@ -55,17 +55,15 @@ class User extends Authenticatable implements PasskeyUser, FilamentUser, HasName
         return $this->hasMany(User::class, 'supervisor_id');
     }
 
-     public function scopeAdmins($query)
+    public function scopeAdmins($query)
     {
         return $query->where('role', 'admin');
     }
-
 
     public function scopeSupervisorsUsers($query)
     {
         return $query->where('role', 'supervisor');
     }
-
 
     public function scopeAgentsUsers($query)
     {
@@ -78,16 +76,17 @@ class User extends Authenticatable implements PasskeyUser, FilamentUser, HasName
     }
 
     public function actions()
-{
-    return $this->hasMany(Action::class, 'assigned_to');
-}   
-public function getFilamentName(): string
-{
-    return $this->full_name ?: $this->email;
-}
-   public function canAccessPanel(Panel $panel): bool
-{
-    return $this->role === 'admin';
-}
+    {
+        return $this->hasMany(Action::class, 'assigned_to');
+    }
 
+    public function getFilamentName(): string
+    {
+        return $this->full_name ?: $this->email;
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->role === 'admin';
+    }
 }

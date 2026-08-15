@@ -6,19 +6,20 @@ use App\Models\Project;
 
 class ProjectControllerGet extends Controller
 {
-     public function getProjects(){
-    
-    $this->authorize('viewAny', Project::class);
+    public function getProjects()
+    {
 
-    $projects = Project::paginate(2);
+        $this->authorize('viewAny', Project::class);
 
-    return view('admin.projects', compact('projects'));
- }
+        $projects = Project::paginate(2);
 
- public function edit(Project $project)
-{
-    $this->authorize('view', $project); 
-    
-    return response()->json($project);
-}
+        return view('admin.projects', compact('projects'));
+    }
+
+    public function edit(Project $project)
+    {
+        $this->authorize('view', $project);
+
+        return response()->json($project);
+    }
 }

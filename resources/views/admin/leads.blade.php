@@ -197,78 +197,6 @@
             flex-wrap: nowrap;
         }
 
-        /* Stat Cards */
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.25rem;
-            margin-bottom: 1.75rem;
-        }
-        .stat-card {
-            background: white;
-            border-radius: 1.5rem;
-            padding: 1.5rem 1.75rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            border: 1px solid #f1f4f9;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(15,40,111,0.02) 0%, transparent 60%);
-            pointer-events: none;
-        }
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 28px -8px rgba(15,40,111,0.08);
-            border-color: #dce3f0;
-        }
-        .stat-card .accent {
-            width: 40px;
-            height: 4px;
-            border-radius: 4px;
-            margin-bottom: 0.75rem;
-        }
-        .stat-card .accent.blue { background: #0F286F; }
-        .stat-card .accent.green { background: #059669; }
-        .stat-card .accent.amber { background: #d97706; }
-        .stat-card .accent.purple { background: #7c3aed; }
-
-        .stat-value {
-            font-size: 2.25rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: #0b1b3a;
-            line-height: 1.1;
-        }
-        .stat-label {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #6b7a8f;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            margin-top: 0.2rem;
-        }
-        .stat-desc {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            margin-top: 0.25rem;
-            font-weight: 400;
-        }
-        @media (max-width: 768px) {
-            .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-            .stat-card { padding: 1.25rem; }
-            .stat-value { font-size: 1.75rem; }
-        }
-        @media (max-width: 480px) {
-            .stat-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-            .stat-card { padding: 1rem; }
-            .stat-value { font-size: 1.5rem; }
-        }
-
         .clear-filters-btn {
             background: white;
             border: 1.5px solid #e2e8f0;
@@ -389,34 +317,6 @@
         <button @click="open=true" class="brand-bg text-white px-6 py-3 rounded-xl hover:opacity-90 transition flex items-center gap-2 shadow-md shadow-blue-900/10">
             <span>+</span> Add Lead
         </button>
-    </div>
-
-    <!-- STATS (Total from server, others from current page) -->
-    <div class="stat-grid">
-        <div class="stat-card">
-            <div class="stat-value" x-text="totalLeads"></div>
-            <div class="stat-label">Total Leads</div>
-            <div class="stat-desc mb-1">All-time prospects</div>
-            <div class="accent blue"></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" x-text="newLeads"></div>
-            <div class="stat-label">New</div>
-            <div class="stat-desc mb-1">Fresh inquiries (this page)</div>
-            <div class="accent blue"></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" x-text="activeLeads"></div>
-            <div class="stat-label">Active</div>
-            <div class="stat-desc mb-1">In progress (this page)</div>
-            <div class="accent blue"></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" x-text="completedLeads"></div>
-            <div class="stat-label">Completed</div>
-            <div class="stat-desc mb-1">Closed / won (this page)</div>
-            <div class="accent blue"></div>
-        </div>
     </div>
 
     <!-- FILTER SECTION (filters only the current page) -->
@@ -1153,12 +1053,7 @@
                     return true;
                 });
             },
-            // Total uses server-provided count
             get totalLeads() { return this.totalLeadsCount; },
-            // Others reflect only the current page (not global)
-            get newLeads() { return this.leads.filter(l => l.current_stage === 'new').length; },
-            get completedLeads() { return this.leads.filter(l => l.current_stage === 'completed').length; },
-            get activeLeads() { return this.leads.filter(l => ['contacted','qualified','site visit','proposal sent','initial payment'].includes(l.current_stage)).length; },
 
             init() {
                 this.$nextTick(() => {

@@ -57,26 +57,6 @@
         </button>
     </div>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-        <div class="bg-white rounded-xl p-4 sm:p-6 border border-gray-100">
-            <div class="text-2xl sm:text-3xl font-bold text-[#0F286F]">{{ $projects->count() }}</div>
-            <div class="text-xs sm:text-sm text-gray-500 mt-0.5">Total Projects</div>
-        </div>
-        <div class="bg-white rounded-xl p-4 sm:p-6 border border-gray-100">
-            <div class="text-2xl sm:text-3xl font-bold text-[#0F286F]">{{ $projects->where('status', 'active')->count() + $projects->whereNull('status')->count() }}</div>
-            <div class="text-xs sm:text-sm text-gray-500 mt-0.5">Active</div>
-        </div>
-        <div class="bg-white rounded-xl p-4 sm:p-6 border border-gray-100">
-            <div class="text-2xl sm:text-3xl font-bold text-[#0F286F]">{{ $projects->where('status', 'completed')->count() }}</div>
-            <div class="text-xs sm:text-sm text-gray-500 mt-0.5">Completed</div>
-        </div>
-        <div class="bg-white rounded-xl p-4 sm:p-6 border border-gray-100">
-            <div class="text-2xl sm:text-3xl font-bold text-[#0F286F]">{{ $projects->where('status', 'pending')->count() }}</div>
-            <div class="text-xs sm:text-sm text-gray-500 mt-0.5">Pending</div>
-        </div>
-    </div>
-
     <!-- Projects Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         @forelse($projects as $project)
@@ -90,13 +70,7 @@
 
             <div class="flex justify-between items-start mb-2 sm:mb-3">
                 <h3 class="text-base sm:text-lg font-semibold text-gray-800 break-words pr-12">{{ $project->project_name }}</h3>
-                @if($project->status == 'completed')
-                <span class="inline-block px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium uppercase tracking-wider bg-blue-100 text-blue-800 whitespace-nowrap">Completed</span>
-                @elseif($project->status == 'pending')
-                <span class="inline-block px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium uppercase tracking-wider bg-yellow-100 text-yellow-800 whitespace-nowrap">Pending</span>
-                @else
-                <span class="inline-block px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium uppercase tracking-wider bg-green-100 text-green-800 whitespace-nowrap">Active</span>
-                @endif
+                {{-- Status removed since no status column exists --}}
             </div>
 
             <p class="text-xs sm:text-sm text-gray-600 mb-2 break-words">{{ $project->location_address ?? 'N/A' }}</p>
@@ -291,23 +265,7 @@
                         @enderror
                     </div>
 
-                    <!-- Status -->
-                    <div>
-                        <label for="status" class="block mb-1.5 sm:mb-2 font-semibold text-[#0F286F] text-sm sm:text-base">
-                            Status
-                        </label>
-                        <select
-                            id="status"
-                            name="status"
-                            class="w-full border border-gray-300 rounded-xl px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base focus:border-[#0F286F] focus:ring-2 focus:ring-[#0F286F]/10 outline-none transition @error('status') border-red-600 focus:border-red-600 focus:ring-red-600/10 @enderror">
-                            <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                            <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                        </select>
-                        @error('status')
-                            <span class="text-red-600 text-xs mt-1 block">{{ $message }}</span>
-                        @enderror
-                    </div>
+                    {{-- Status field removed --}}
 
                 </div>
 
@@ -470,23 +428,7 @@
                         @enderror
                     </div>
 
-                    <!-- Status -->
-                    <div>
-                        <label for="edit_status" class="block mb-1.5 sm:mb-2 font-semibold text-[#0F286F] text-sm sm:text-base">
-                            Status
-                        </label>
-                        <select
-                            id="edit_status"
-                            name="status"
-                            class="w-full border border-gray-300 rounded-xl px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base focus:border-[#0F286F] focus:ring-2 focus:ring-[#0F286F]/10 outline-none transition @error('status') border-red-600 focus:border-red-600 focus:ring-red-600/10 @enderror">
-                            <option value="active">Active</option>
-                            <option value="pending">Pending</option>
-                            <option value="completed">Completed</option>
-                        </select>
-                        @error('status')
-                            <span class="text-red-600 text-xs mt-1 block">{{ $message }}</span>
-                        @enderror
-                    </div>
+                    {{-- Status field removed --}}
 
                 </div>
 
@@ -527,7 +469,6 @@
 <script>
     // Store the edit project ID when there are errors
     @if($errors->any() && session('edit_error'))
-        // Keep the edit modal open with the error data
         document.addEventListener('DOMContentLoaded', function() {
             const editModal = document.getElementById('editModal');
             if (editModal) {
@@ -535,13 +476,11 @@
                 document.body.style.overflow = 'hidden';
             }
 
-            // Set the form action with the project ID from session
             const editForm = document.getElementById('editForm');
             if (editForm && '{{ session('edit_project_id') }}') {
                 editForm.action = '/updateProject/{{ session('edit_project_id') }}';
             }
 
-            // Populate old values from session flash data
             @if(old('project_name'))
                 document.getElementById('edit_project_name').value = '{{ old('project_name') }}';
             @endif
@@ -562,9 +501,6 @@
             @endif
             @if(old('due_date'))
                 document.getElementById('edit_due_date').value = '{{ old('due_date') }}';
-            @endif
-            @if(old('status'))
-                document.getElementById('edit_status').value = '{{ old('status') }}';
             @endif
         });
     @endif
@@ -600,17 +536,12 @@
 
     // Open edit modal with project data
     function openEditModal(projectId) {
-        // Store project ID for error handling
         window.editProjectId = projectId;
 
-        // Fetch project data via AJAX
         fetch(`/projects/${projectId}/edit`)
             .then(response => response.json())
             .then(project => {
-                // Set form action
                 document.getElementById('editForm').action = `/updateProject/${projectId}`;
-
-                // Populate form fields
                 document.getElementById('edit_project_name').value = project.project_name || '';
                 document.getElementById('edit_project_manager').value = project.project_manager || '';
                 document.getElementById('edit_location_address').value = project.location_address || '';
@@ -618,14 +549,11 @@
                 document.getElementById('edit_completed_floors').value = project.completed_floors || 0;
                 document.getElementById('edit_total_units').value = project.total_units || 0;
                 document.getElementById('edit_due_date').value = project.due_date || '';
-                document.getElementById('edit_status').value = project.status || 'active';
-
-                // Open modal
+                // Status field removed from modal, so no assignment needed
                 openModal('editModal');
             })
             .catch(error => {
                 console.error('Error fetching project data:', error);
-                // Show error toast
                 showToast('Error loading project data', 'error');
             });
     }

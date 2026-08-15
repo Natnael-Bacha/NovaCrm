@@ -13,69 +13,64 @@ class ProjectProgressChart extends ChartWidget
 
     protected int|string|array $columnSpan = 'full';
 
-
     protected function getData(): array
-{
-    $projects = Project::all();
+    {
+        $projects = Project::all();
 
-    return [
+        return [
 
-        'datasets' => [
-            [
-                'label' => 'Completion',
+            'datasets' => [
+                [
+                    'label' => 'Completion',
 
-                'data' => $projects->map(function ($project) {
+                    'data' => $projects->map(function ($project) {
 
-                    return $project->total_floors > 0
-                        ? round(($project->completed_floors / $project->total_floors) * 100)
-                        : 0;
+                        return $project->total_floors > 0
+                            ? round(($project->completed_floors / $project->total_floors) * 100)
+                            : 0;
 
-                })->toArray(),
+                    })->toArray(),
 
-                'backgroundColor' => '#0F286F',
+                    'backgroundColor' => '#0F286F',
 
-                'borderRadius' => 8,
+                    'borderRadius' => 8,
+                ],
             ],
-        ],
 
-        'labels' => $projects->map(function ($project) {
+            'labels' => $projects->map(function ($project) {
 
-            $percentage = $project->total_floors > 0
-                ? round(($project->completed_floors / $project->total_floors) * 100)
-                : 0;
+                $percentage = $project->total_floors > 0
+                    ? round(($project->completed_floors / $project->total_floors) * 100)
+                    : 0;
 
-            return $project->project_name .
-                " (" .
-                $project->completed_floors .
-                "/" .
-                $project->total_floors .
-                " floors - " .
-                $percentage .
-                "%)";
+                return $project->project_name.
+                    ' ('.
+                    $project->completed_floors.
+                    '/'.
+                    $project->total_floors.
+                    ' floors - '.
+                    $percentage.
+                    '%)';
 
-        })->toArray(),
+            })->toArray(),
 
-    ];
-}
-
+        ];
+    }
 
     protected function getType(): string
     {
         return 'bar';
     }
 
-
     protected function getOptions(): array
     {
         $projects = Project::all();
-
 
         return [
 
             'indexAxis' => 'y',
 
             'maintainAspectRatio' => false,
-
 
             'scales' => [
 
@@ -95,13 +90,11 @@ class ProjectProgressChart extends ChartWidget
 
             ],
 
-
             'plugins' => [
 
                 'legend' => [
                     'display' => false,
                 ],
-
 
                 'tooltip' => [
 
@@ -109,16 +102,16 @@ class ProjectProgressChart extends ChartWidget
 
                         'label' => 'function(context) {
 
-                            const projects = ' . json_encode(
-                                $projects->map(function($project){
+                            const projects = '.json_encode(
+                            $projects->map(function ($project) {
 
-                                    return [
-                                        "completed" => $project->completed_floors,
-                                        "total" => $project->total_floors,
-                                    ];
+                                return [
+                                    'completed' => $project->completed_floors,
+                                    'total' => $project->total_floors,
+                                ];
 
-                                })
-                            ) . ';
+                            })
+                        ).';
 
                             let project = projects[context.dataIndex];
 
@@ -139,7 +132,6 @@ class ProjectProgressChart extends ChartWidget
 
         ];
     }
-
 
     protected function getHeight(): string
     {

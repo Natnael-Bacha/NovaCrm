@@ -16,9 +16,8 @@ class Project extends Model
         'due_date',
     ];
 
-
     public function deals()
-{
-    return $this->hasMany(Deal::class);
-}
+    {
+        return $this->hasMany(Deal::class);
+    }
 }

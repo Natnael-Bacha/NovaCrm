@@ -166,32 +166,6 @@
         </div>
     </div>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6 flex-shrink-0" id="statsContainer">
-        <div class="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 transition-all" id="statTotal">
-            <div class="text-2xl sm:text-3xl font-bold text-[#0F286F]" id="statTotalValue">{{ $leads->count() }}</div>
-            <div class="text-xs sm:text-sm text-gray-500 mt-0.5">Total Leads</div>
-        </div>
-        <div class="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 transition-all" id="statNew">
-            <div class="text-2xl sm:text-3xl font-bold text-[#0F286F]" id="statNewValue">{{ $leads->where('current_stage', 'new')->count() }}</div>
-            <div class="text-xs sm:text-sm text-gray-500 mt-0.5">New</div>
-        </div>
-        <div class="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 transition-all" id="statInProgress">
-            <div class="text-2xl sm:text-3xl font-bold text-[#0F286F]" id="statInProgressValue">
-                {{ $leads->where('current_stage', 'contacted')->count() + 
-                   $leads->where('current_stage', 'qualified')->count() + 
-                   $leads->where('current_stage', 'site visit')->count() +
-                   $leads->where('current_stage', 'proposal sent')->count() +
-                   $leads->where('current_stage', 'initial payment')->count() }}
-            </div>
-            <div class="text-xs sm:text-sm text-gray-500 mt-0.5">In Progress</div>
-        </div>
-        <div class="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 transition-all" id="statCompleted">
-            <div class="text-2xl sm:text-3xl font-bold text-[#0F286F]" id="statCompletedValue">{{ $leads->where('current_stage', 'completed')->count() }}</div>
-            <div class="text-xs sm:text-sm text-gray-500 mt-0.5">Completed</div>
-        </div>
-    </div>
-
     <!-- Kanban Board -->
     <div class="kanban-wrapper flex-1 min-h-0 overflow-hidden">
         <div class="overflow-x-auto h-full pb-2 -mx-2">
@@ -390,6 +364,7 @@
         }, 3000);
     }
 
+    // Updated updateStats – only updates column count badges, no global stats
     function updateStats(fromStageKey, toStageKey) {
         const fromCountEl = document.getElementById(`count-${fromStageKey}`);
         const toCountEl = document.getElementById(`count-${toStageKey}`);
@@ -415,25 +390,9 @@
                 toCountEl.classList.add('bg-[#0F286F]', 'text-white');
             }
         }
-        updateStatValues();
     }
 
-    function updateStatValues() {
-        const total = document.querySelectorAll('.lead-card').length;
-        document.getElementById('statTotalValue').textContent = total;
-
-        const newCount = document.querySelectorAll('#column-new .lead-card').length;
-        const contactedCount = document.querySelectorAll('#column-contacted .lead-card').length;
-        const qualifiedCount = document.querySelectorAll('#column-qualified .lead-card').length;
-        const siteVisitCount = document.querySelectorAll('#column-site_visit .lead-card').length;
-        const proposalSentCount = document.querySelectorAll('#column-proposal_sent .lead-card').length;
-        const initialPaymentCount = document.querySelectorAll('#column-initial_payment .lead-card').length;
-        const completedCount = document.querySelectorAll('#column-completed .lead-card').length;
-
-        document.getElementById('statNewValue').textContent = newCount;
-        document.getElementById('statInProgressValue').textContent = contactedCount + qualifiedCount + siteVisitCount + proposalSentCount + initialPaymentCount;
-        document.getElementById('statCompletedValue').textContent = completedCount;
-    }
+    // No longer needed – removed updateStatValues function
 
     // Update buttons on a card based on its new stage
     function updateCardButtons(cardElement, stageKey) {
@@ -520,6 +479,7 @@
             });
 
             setTimeout(() => leadCard.classList.remove('entering'), 300);
+            // Update column count badges only
             updateStats(fromStageKey, toStageKey);
         }, 300);
     }

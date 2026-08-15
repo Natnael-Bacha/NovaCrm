@@ -8,41 +8,36 @@ use App\Models\Project;
 
 class ProjectController extends Controller
 {
+    public function createProject(StoreProjectRequest $request)
+    {
 
- public function createProject(StoreProjectRequest $request)
-{
+        $this->authorize('create', Project::class);
+        $validated = $request->validated();
 
-    $this->authorize('create', Project::class);
-    $validated = $request->validated();
+        Project::create($validated);
 
-    Project::create($validated);
+        return redirect()->back()->with('success', 'Project created successfully.');
+    }
 
-    return redirect()->back()->with('success', 'Project created successfully.');
+    public function updateProject(UpdateProjectRequest $request, Project $project)
+    {
+
+        $this->authorize('update', $project);
+
+        $validated = $request->validated();
+
+        $project->update($validated);
+
+        return redirect()->back()
+            ->with('success', 'Project updated successfully.');
+    }
+
+    public function deleteProject(Project $project)
+    {
+        $this->authorize('delete', $project);
+
+        $project->delete();
+
+        return redirect()->back()->with('success', 'Project deleted successfully!');
+    }
 }
-
-public function updateProject(UpdateProjectRequest $request, Project $project)
-{
-
-    
-    $this->authorize('update', $project);
-    
-    $validated = $request->validated();
-    
-    $project->update($validated);
-    
-    return redirect()->back()
-        ->with('success', 'Project updated successfully.');
-}
-
-public function deleteProject(Project $project)
-{
-     $this->authorize('delete', $project);
-    
-    $project->delete();
-    
-    return redirect()->back()->with('success', 'Project deleted successfully!');
-}
-
-}
-
-

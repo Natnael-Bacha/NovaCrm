@@ -49,7 +49,6 @@ it('allows an admin to update an action status', function () {
     ]);
 });
 
-
 it('rejects an invalid status when updating an action status', function () {
     $admin = User::factory()->create([
         'role' => 'admin',
@@ -89,7 +88,6 @@ it('rejects an invalid status when updating an action status', function () {
         'status' => 'on_progress',
     ]);
 });
-
 
 it('prevents a non-admin from updating an action status', function () {
     $agent = User::factory()->create([
@@ -131,7 +129,6 @@ it('prevents a non-admin from updating an action status', function () {
     ]);
 });
 
-
 it('requires the status when updating an action status', function () {
     $admin = User::factory()->create([
         'role' => 'admin',
@@ -169,7 +166,6 @@ it('requires the status when updating an action status', function () {
         'status' => 'on_progress',
     ]);
 });
-
 
 it('allows an admin to change an action status from done to on progress', function () {
     $admin = User::factory()->create([

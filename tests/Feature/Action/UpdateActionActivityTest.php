@@ -4,7 +4,6 @@ use App\Models\Action;
 use App\Models\Lead;
 use App\Models\User;
 
-
 it('allows an admin to update an action activity type', function () {
 
     $admin = User::factory()->create([
@@ -51,7 +50,6 @@ it('allows an admin to update an action activity type', function () {
     ]);
 });
 
-
 it('prevents a non-admin from updating an action activity type', function () {
 
     $admin = User::factory()->create([
@@ -97,7 +95,6 @@ it('prevents a non-admin from updating an action activity type', function () {
     ]);
 });
 
-
 it('rejects an invalid activity type when updating an action activity', function () {
 
     $admin = User::factory()->create([
@@ -138,7 +135,6 @@ it('rejects an invalid activity type when updating an action activity', function
         'activity_type' => 'follow_up_call',
     ]);
 });
-
 
 it('only changes the activity type when updating action activity', function () {
 
@@ -185,7 +181,6 @@ it('only changes the activity type when updating action activity', function () {
         'description' => 'Original description.',
     ]);
 });
-
 
 it('prevents an unauthenticated user from updating action activity', function () {
 

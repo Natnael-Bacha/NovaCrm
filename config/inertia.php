@@ -16,8 +16,8 @@ return [
     */
 
     'ssr' => [
-    'enabled' =>  false,
-    'url' => 'http://127.0.0.1:5173/__inertia_ssr', // <-- Match Vite's dev server port and SSR route
+        'enabled' => false,
+        'url' => 'http://127.0.0.1:5173/__inertia_ssr', // <-- Match Vite's dev server port and SSR route
     ],
 
     /*

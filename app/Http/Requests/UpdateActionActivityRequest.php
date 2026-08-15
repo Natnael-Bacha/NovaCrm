@@ -33,4 +33,3 @@ class UpdateActionActivityRequest extends FormRequest
         ];
     }
 }
-

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Unit extends Model
 {
-     protected $fillable = [
+    protected $fillable = [
         'project_id',
         'unit_number',
         'floor',
@@ -16,7 +16,6 @@ class Unit extends Model
         'price',
         'status',
     ];
-
 
     /**
      * Unit belongs to a project
@@ -27,7 +26,7 @@ class Unit extends Model
     }
 
     public function deal()
-{
-    return $this->hasOne(Deal::class);
-}
+    {
+        return $this->hasOne(Deal::class);
+    }
 }

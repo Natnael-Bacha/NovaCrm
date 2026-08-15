@@ -4,7 +4,6 @@ use App\Models\Action;
 use App\Models\Lead;
 use App\Models\User;
 
-
 it('allows an admin to delete an action', function () {
 
     $admin = User::factory()->create([
@@ -47,7 +46,6 @@ it('allows an admin to delete an action', function () {
     ]);
 });
 
-
 it('prevents a non-admin from deleting an action', function () {
 
     $admin = User::factory()->create([
@@ -89,7 +87,6 @@ it('prevents a non-admin from deleting an action', function () {
     ]);
 });
 
-
 it('prevents an unauthenticated user from deleting an action', function () {
 
     $admin = User::factory()->create([
@@ -126,7 +123,6 @@ it('prevents an unauthenticated user from deleting an action', function () {
         'id' => $action->id,
     ]);
 });
-
 
 it('returns not found when deleting a nonexistent action', function () {
 

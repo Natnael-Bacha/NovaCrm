@@ -143,13 +143,6 @@
                 return true;
             });
         },
-        get totalActions() { return this.actions.length; },
-        get doneActions() { return this.actions.filter(a => a.status === 'done').length; },
-        get onProgressActions() { return this.actions.filter(a => a.status === 'on_progress').length; },
-        get assignedToMe() {
-            const currentUserId = {{ auth()->id() ?? 0 }};
-            return this.actions.filter(a => a.assigned_to === currentUserId).length;
-        },
         
         // Minimum datetime for scheduled_time picker
         get minDateTime() {
@@ -277,34 +270,6 @@
                 </svg>
                 New Action
             </button>
-        </div>
-    </div>
-
-    <!-- STATS -->
-    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5 mb-6">
-        <div class="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 hover:shadow-md transition-all relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-10 h-1 bg-[#0F286F] rounded-br-lg"></div>
-            <div class="text-3xl sm:text-4xl font-bold text-[#0b1b3a]" x-text="totalActions"></div>
-            <div class="text-xs font-medium text-gray-500 uppercase tracking-wider mt-1">Total Actions</div>
-            <div class="text-xs text-gray-400 mt-0.5">All activities</div>
-        </div>
-        <div class="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 hover:shadow-md transition-all relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-10 h-1 bg-emerald-600 rounded-br-lg"></div>
-            <div class="text-3xl sm:text-4xl font-bold text-[#0b1b3a]" x-text="doneActions"></div>
-            <div class="text-xs font-medium text-gray-500 uppercase tracking-wider mt-1">Done</div>
-            <div class="text-xs text-gray-400 mt-0.5">Completed actions</div>
-        </div>
-        <div class="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 hover:shadow-md transition-all relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-10 h-1 bg-amber-600 rounded-br-lg"></div>
-            <div class="text-3xl sm:text-4xl font-bold text-[#0b1b3a]" x-text="onProgressActions"></div>
-            <div class="text-xs font-medium text-gray-500 uppercase tracking-wider mt-1">On Progress</div>
-            <div class="text-xs text-gray-400 mt-0.5">Pending actions</div>
-        </div>
-        <div class="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 hover:shadow-md transition-all relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-10 h-1 bg-purple-600 rounded-br-lg"></div>
-            <div class="text-3xl sm:text-4xl font-bold text-[#0b1b3a]" x-text="assignedToMe"></div>
-            <div class="text-xs font-medium text-gray-500 uppercase tracking-wider mt-1">Assigned to Me</div>
-            <div class="text-xs text-gray-400 mt-0.5">Your tasks</div>
         </div>
     </div>
 

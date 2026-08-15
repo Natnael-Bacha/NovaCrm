@@ -41,8 +41,7 @@ class UpdateUnitRequest extends FormRequest
                 'max:255',
 
                 Rule::unique('units')
-                    ->where(fn ($query) =>
-                        $query->where('project_id', $this->project_id)
+                    ->where(fn ($query) => $query->where('project_id', $this->project_id)
                     )
                     ->ignore($unit->id),
             ],
@@ -80,7 +79,7 @@ class UpdateUnitRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            if (!$this->project_id || !$this->floor) {
+            if (! $this->project_id || ! $this->floor) {
                 return;
             }
 

@@ -8,6 +8,7 @@ use Filament\Widgets\ChartWidget;
 class UnitStatusChart extends ChartWidget
 {
     protected ?string $heading = 'Unit Status Distribution';
+
     protected ?string $description = '';
 
     protected int|string|array $columnSpan = 'full';
@@ -48,7 +49,8 @@ class UnitStatusChart extends ChartWidget
         $labels = $units->keys()->map(function ($status, $index) use ($units, $total) {
             $value = $units->values()->toArray()[$index];
             $percentage = round(($value / $total) * 100, 1);
-            return ucfirst($status) . " ({$value} - {$percentage}%)";
+
+            return ucfirst($status)." ({$value} - {$percentage}%)";
         })->toArray();
 
         return [
@@ -86,7 +88,7 @@ class UnitStatusChart extends ChartWidget
                 'legend' => [
                     'position' => 'bottom',
                     'align' => 'center',
-              
+
                 ],
                 'tooltip' => [
                     'enabled' => true,

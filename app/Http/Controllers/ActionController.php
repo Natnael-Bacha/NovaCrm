@@ -12,10 +12,9 @@ use App\Models\Lead;
 class ActionController extends Controller
 {
     public function createAction(StoreActionRequest $request, Lead $lead)
-    {   
+    {
         $this->authorize('create', Action::class);
         $validated = $request->validated();
-
 
         Action::create([
             'lead_id' => $lead->id,
@@ -26,68 +25,65 @@ class ActionController extends Controller
             'description' => $validated['description'] ?? null,
         ]);
 
-
         return redirect()
             ->back()
             ->with('success', 'Action created successfully');
     }
 
-        public function updateAction(UpdateActionRequest $request, Action $action)
-{      
+    public function updateAction(UpdateActionRequest $request, Action $action)
+    {
         $this->authorize('update', $action);
-         $validated = $request->validated();
+        $validated = $request->validated();
 
-    $action->update([
-        'lead_id'        => $validated['lead_id'],
-        'activity_type'  => $validated['activity_type'],
-        'assigned_to'    => $validated['assigned_to'],
-        'status'         => $validated['status'],
-        'scheduled_time' => $validated['scheduled_time'],
-        'description'    => $validated['description'] ?? null,
-    ]);
+        $action->update([
+            'lead_id' => $validated['lead_id'],
+            'activity_type' => $validated['activity_type'],
+            'assigned_to' => $validated['assigned_to'],
+            'status' => $validated['status'],
+            'scheduled_time' => $validated['scheduled_time'],
+            'description' => $validated['description'] ?? null,
+        ]);
 
-    return redirect()
-        ->back()
-        ->with('success', 'Action updated successfully.');
-} 
-
+        return redirect()
+            ->back()
+            ->with('success', 'Action updated successfully.');
+    }
 
     public function deleteAction(Action $action)
-{    
-    $this->authorize('delete', $action);
-    $action->delete();
+    {
+        $this->authorize('delete', $action);
+        $action->delete();
 
-    return redirect()
-        ->back()
-        ->with('success', 'Action deleted successfully.');
-}
+        return redirect()
+            ->back()
+            ->with('success', 'Action deleted successfully.');
+    }
 
-public function updateActionActivity(UpdateActionActivityRequest $request, Action $action)
-{   
-    $this->authorize('update', $action);
-    $validated = $request->validated();
+    public function updateActionActivity(UpdateActionActivityRequest $request, Action $action)
+    {
+        $this->authorize('update', $action);
+        $validated = $request->validated();
 
-    $action->update([
-        'activity_type' => $validated['activity_type'],
-    ]);
+        $action->update([
+            'activity_type' => $validated['activity_type'],
+        ]);
 
-    return redirect()
-        ->back()
-        ->with('success', 'Activity type updated successfully.');
-}
+        return redirect()
+            ->back()
+            ->with('success', 'Activity type updated successfully.');
+    }
 
-public function updateActionStatus(UpdateActionStatusRequest $request, Action $action)
-{   
-    $this->authorize('update', $action);
-    $validated = $request->validated();
+    public function updateActionStatus(UpdateActionStatusRequest $request, Action $action)
+    {
+        $this->authorize('update', $action);
+        $validated = $request->validated();
 
-    $action->update([
-        'status' => $validated['status'],
-    ]);
+        $action->update([
+            'status' => $validated['status'],
+        ]);
 
-    return redirect()
-        ->back()
-        ->with('success', 'Status updated successfully.');
-}
-
+        return redirect()
+            ->back()
+            ->with('success', 'Status updated successfully.');
+    }
 }

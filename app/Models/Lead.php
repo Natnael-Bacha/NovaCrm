@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Lead extends Model
 {
- 
     protected $fillable = [
         'full_name',
         'email',
@@ -24,13 +23,13 @@ class Lead extends Model
         return $this->belongsTo(User::class, 'agent_id');
     }
 
-    public function deals(){
-    return $this->hasMany(Deal::class);
+    public function deals()
+    {
+        return $this->hasMany(Deal::class);
     }
 
     public function actions()
-{
-    return $this->hasMany(Action::class);
+    {
+        return $this->hasMany(Action::class);
+    }
 }
-}
-

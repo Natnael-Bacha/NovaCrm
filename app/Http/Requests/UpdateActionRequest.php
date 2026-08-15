@@ -59,4 +59,3 @@ class UpdateActionRequest extends FormRequest
         ];
     }
 }
-

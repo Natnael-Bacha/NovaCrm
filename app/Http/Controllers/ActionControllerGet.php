@@ -8,14 +8,13 @@ use App\Models\User;
 
 class ActionControllerGet extends Controller
 {
-    
-public function getActions()
-{    
-    $this->authorize('viewAny', Action::class);
-    $actions = Action::with(['lead', 'assignedUser'])->paginate(2);
-    $leads = Lead::select('id', 'full_name')->get();
-    $users = User::select('id', 'full_name')->get();
+    public function getActions()
+    {
+        $this->authorize('viewAny', Action::class);
+        $actions = Action::with(['lead', 'assignedUser'])->paginate(2);
+        $leads = Lead::select('id', 'full_name')->get();
+        $users = User::select('id', 'full_name')->get();
 
-    return view('admin.actions', compact('actions', 'leads', 'users'));
-}
+        return view('admin.actions', compact('actions', 'leads', 'users'));
+    }
 }

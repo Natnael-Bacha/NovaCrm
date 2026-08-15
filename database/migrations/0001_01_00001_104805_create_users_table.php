@@ -11,29 +11,29 @@ return new class extends Migration
      */
     public function up(): void
     {
-  Schema::create('users', function (Blueprint $table) {
-    $table->id();
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
 
-    $table->string('full_name');
-    $table->string('email')->unique();
-    $table->string('password');
+            $table->string('full_name');
+            $table->string('email')->unique();
+            $table->string('password');
 
-    $table->enum('role', [
-        'admin',
-        'supervisor',
-        'agent'
-    ]);
+            $table->enum('role', [
+                'admin',
+                'supervisor',
+                'agent',
+            ]);
 
-    $table->foreignId('supervisor_id')
-        ->nullable()
-        ->constrained('users')
-        ->nullOnDelete();
+            $table->foreignId('supervisor_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
-    $table->integer('monthly_target')->default(0);
+            $table->integer('monthly_target')->default(0);
 
-    $table->rememberToken();
-    $table->timestamps();
-});
+            $table->rememberToken();
+            $table->timestamps();
+        });
     }
 
     /**

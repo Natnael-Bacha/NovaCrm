@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
 
-             DB::statement("
+            DB::statement("
             ALTER TABLE users
             MODIFY role ENUM('admin', 'supervisor', 'agent', 'collector')
             NOT NULL

@@ -12,21 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('leads', function (Blueprint $table) {
-                   $table->id();
-
+            $table->id();
 
             // Customer Information
             $table->string('full_name');
             $table->string('email')->nullable();
             $table->string('phone');
 
-
             // Lead Details
             $table->string('budget_range')->nullable();
 
             $table->string('preferred_location')
                 ->nullable();
-
 
             // Marketing Information
             $table->enum('lead_source', [
@@ -36,15 +33,13 @@ return new class extends Migration
                 'walk_in',
             ]);
 
-
             // Type of customer
             $table->enum('lead_type', [
                 'buyer',
                 'seller',
                 'Tenant',
-                'investor'
+                'investor',
             ]);
-
 
             // Sales Pipeline Stage
             $table->enum('current_stage', [
@@ -55,9 +50,8 @@ return new class extends Migration
                 'proposal sent',
                 'initial payment',
                 'completed',
-                'lost'
+                'lost',
             ])->default('new');
-
 
             // Assigned Sales Agent
             $table->foreignId('agent_id')
@@ -65,10 +59,8 @@ return new class extends Migration
                 ->constrained('users')
                 ->nullOnDelete();
 
-
             $table->timestamps();
 
-    
         });
     }
 

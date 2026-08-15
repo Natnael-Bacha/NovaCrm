@@ -300,77 +300,6 @@
         flex-wrap: nowrap;
     }
 
-    /* Stat Cards */
-    .stat-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.25rem;
-        margin-bottom: 1.75rem;
-    }
-    .stat-card {
-        background: white;
-        border-radius: 1.5rem;
-        padding: 1.5rem 1.75rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        border: 1px solid #f1f4f9;
-        transition: all 0.2s ease;
-        position: relative;
-        overflow: hidden;
-    }
-    .stat-card::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, rgba(15,40,111,0.02) 0%, transparent 60%);
-        pointer-events: none;
-    }
-    .stat-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 28px -8px rgba(15,40,111,0.08);
-        border-color: #dce3f0;
-    }
-    .stat-card .accent {
-        width: 40px;
-        height: 4px;
-        border-radius: 4px;
-        margin-bottom: 0.75rem;
-    }
-    .stat-card .accent.blue { background: #0F286F; }
-    .stat-card .accent.green { background: #059669; }
-    .stat-card .accent.amber { background: #d97706; }
-    .stat-card .accent.purple { background: #7c3aed; }
-    .stat-value {
-        font-size: 2.25rem;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-        color: #0b1b3a;
-        line-height: 1.1;
-    }
-    .stat-label {
-        font-size: 0.8rem;
-        font-weight: 500;
-        color: #6b7a8f;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        margin-top: 0.2rem;
-    }
-    .stat-desc {
-        font-size: 0.75rem;
-        color: #94a3b8;
-        margin-top: 0.25rem;
-        font-weight: 400;
-    }
-    @media (max-width: 768px) {
-        .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-        .stat-card { padding: 1.25rem; }
-        .stat-value { font-size: 1.75rem; }
-    }
-    @media (max-width: 480px) {
-        .stat-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-        .stat-card { padding: 1rem; }
-        .stat-value { font-size: 1.5rem; }
-    }
-
     .clear-filters-btn {
         background: white;
         border: 1.5px solid #e2e8f0;
@@ -444,11 +373,6 @@
                 return true;
             });
         },
-        get totalDeals() { return this.deals.length; },
-        get fullyPaidDeals() { return this.deals.filter(d => d.payment_status === 'fully_paid').length; },
-        get partialPaymentDeals() { return this.deals.filter(d => d.payment_status === 'partial_payment').length; },
-        get pendingDeals() { return this.deals.filter(d => d.payment_status === 'pending').length; },
-        
         clearFilters() {
             this.filterPaymentStatus = '';
             this.filterProject = '';
@@ -530,34 +454,6 @@
         <div>
             <h1 class="text-3xl font-bold brand">Deal Management</h1>
             <p class="text-gray-500 mt-1 text-sm">Manage all deals, track progress, and monitor sales performance.</p>
-        </div>
-    </div>
-
-    <!-- STATS -->
-    <div class="stat-grid">
-        <div class="stat-card">
-            <div class="stat-value" x-text="totalDeals"></div>
-            <div class="stat-label">Total Deals</div>
-            <div class="stat-desc mb-1">All-time deals</div>
-            <div class="accent blue"></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" x-text="fullyPaidDeals"></div>
-            <div class="stat-label">Fully Paid</div>
-            <div class="stat-desc mb-1">Completed payments</div>
-            <div class="accent green"></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" x-text="partialPaymentDeals"></div>
-            <div class="stat-label">Partial Payment</div>
-            <div class="stat-desc mb-1">Partially paid</div>
-            <div class="accent amber"></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" x-text="pendingDeals"></div>
-            <div class="stat-label">Pending</div>
-            <div class="stat-desc mb-1">Awaiting payment</div>
-            <div class="accent purple"></div>
         </div>
     </div>
 
@@ -719,6 +615,7 @@
     </div>
    <!-- PAGINATION LINKS -->
      {{ $deals->links('vendor.pagination.custom') }}
+
     <!-- ============================================= -->
     <!-- DELETE MODAL – with inline style to prevent flash -->
     <!-- ============================================= -->

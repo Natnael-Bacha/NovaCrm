@@ -6,21 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Action extends Model
 {
-     protected $fillable = [
+    protected $fillable = [
         'lead_id',
         'activity_type',
         'assigned_to',
         'status',
         'scheduled_time',
-        'description'
+        'description',
     ];
-
 
     public function lead()
     {
         return $this->belongsTo(Lead::class);
     }
-
 
     public function assignedUser()
     {

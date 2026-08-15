@@ -8,6 +8,7 @@ use Filament\Widgets\ChartWidget;
 class LeadPipelineChart extends ChartWidget
 {
     protected ?string $heading = 'Lead Pipeline';
+
     protected ?string $description = '';
 
     protected function getHeight(): string
@@ -44,7 +45,8 @@ class LeadPipelineChart extends ChartWidget
         $labels = $data->keys()->map(function ($stage, $index) use ($data, $total) {
             $value = $data->values()->toArray()[$index];
             $percentage = round(($value / $total) * 100, 1);
-            return ucfirst(str_replace('_', ' ', $stage)) . " ({$value} - {$percentage}%)";
+
+            return ucfirst(str_replace('_', ' ', $stage))." ({$value} - {$percentage}%)";
         })->toArray();
 
         return [
