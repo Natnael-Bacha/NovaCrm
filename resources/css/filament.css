@@ -1,0 +1,37 @@
+/* Make the stats container a horizontal scrollable row */
+.fi-wi-stats-overview .fi-wi-stats-overview-stats {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 1rem; /* space between cards */
+    padding-bottom: 0.5rem; /* avoid scrollbar overlap */
+}
+
+/* Each card keeps its size and doesn’t shrink */
+.fi-wi-stats-overview .fi-wi-stats-overview-stat {
+    flex: 0 0 auto;
+    width: 250px; /* adjust as needed */
+}
+
+/* Remove default Filament card shadow/ring and apply our own */
+.fi-wi-stats-overview .fi-wi-stats-overview-stat {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.75rem !important;
+    padding: 1rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.fi-wi-stats-overview .fi-wi-stats-overview-stat:hover {
+    transform: translateY(-2px);
+    border-color: #0f286f !important;
+    box-shadow:
+        0 10px 15px -3px rgb(0 0 0 / 0.1),
+        0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+}
+
+/* Make the numeric value brand blue */
+.fi-wi-stats-overview .fi-wi-stats-overview-stat .fi-stats-overview-stat-value {
+    color: #0f286f;
+    font-weight: 600;
+}

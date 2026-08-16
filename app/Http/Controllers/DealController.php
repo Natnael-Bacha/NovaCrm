@@ -9,8 +9,8 @@ use App\Http\Requests\UpdateDealRequest;
 use App\Models\Deal;
 use App\Models\Lead;
 use App\Models\Unit;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 
 class DealController extends Controller
 {
