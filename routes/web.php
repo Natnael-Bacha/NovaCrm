@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActionController;
 use App\Http\Controllers\ActionControllerGet;
+use App\Http\Controllers\AgentControllerGet;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\DealControllerGet;
@@ -107,6 +108,11 @@ Route::middleware(['auth', 'role:admin'])->controller(ActionController::class)->
 
 Route::middleware(['auth', 'role:admin'])->controller(ActionControllerGet::class)->group(function () {
     Route::get('/admin/actions', 'getActions')->name('admin.actions');
+});
+
+Route::middleware(['auth', 'role:agent'])->controller(AgentControllerGet::class)->group(function () {
+    Route::get('/agent/leads', 'getAgentLeads')->name('agent.leads');
+    Route::get('/agent/deals', 'getAgentDeals')->name('agent.deals');
 });
 
 require __DIR__.'/settings.php';

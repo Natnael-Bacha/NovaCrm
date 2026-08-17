@@ -12,6 +12,11 @@ class DealPolicy
         return $user->role === 'admin';
     }
 
+    public function viewDealsAsAgent(User $user): bool
+    {
+        return $user->role === 'agent';
+    }
+
     public function create(User $user): bool
     {
         return $user->role === 'admin';

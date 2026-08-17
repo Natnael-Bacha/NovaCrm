@@ -17,6 +17,12 @@ class LeadPolicy
         return $user->role === 'admin';
     }
 
+    public function viewLeadsAsAgent(User $user): bool
+{
+    return $user->role === 'agent';
+        
+}
+
     public function create(User $user): bool
     {
         return $user->role === 'admin';
