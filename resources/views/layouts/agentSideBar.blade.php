@@ -122,30 +122,18 @@
 
 
                 {{-- My Actions --}}
-                {{-- <a
+                <a
                     href="{{ route('agent.actions') }}"
                     class="flex items-center gap-3 px-4 py-2.5 rounded-md text-sm font-medium transition-colors duration-150"
                     style="{{ $currentRoute == 'agent.actions'
                         ? 'background-color: #0F286F; color: white;'
                         : 'color: #475569;' }}"
                 >
-                    <svg
-                        class="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a3 3 0 016 0M9 5h6"
-                        />
-                    </svg>
+                    
 
-                    My Actions
+                    Actions
                 </a>
- --}}
+
 
                
 

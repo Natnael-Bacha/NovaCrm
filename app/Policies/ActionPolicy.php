@@ -12,6 +12,11 @@ class ActionPolicy
         return $user->role === 'admin';
     }
 
+    public function viewActionsAsAgent(User $user): bool
+    {
+        return $user->role === 'agent';
+    }
+
     public function create(User $user): bool
     {
         return $user->role === 'admin';

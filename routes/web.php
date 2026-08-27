@@ -113,6 +113,7 @@ Route::middleware(['auth', 'role:admin'])->controller(ActionControllerGet::class
 Route::middleware(['auth', 'role:agent'])->controller(AgentControllerGet::class)->group(function () {
     Route::get('/agent/leads', 'getAgentLeads')->name('agent.leads');
     Route::get('/agent/deals', 'getAgentDeals')->name('agent.deals');
+    Route::get('/agent/actions', 'getAgentActions')->name('agent.actions');
 });
 
 require __DIR__.'/settings.php';

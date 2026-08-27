@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Action;
 use App\Models\Deal;
 use App\Models\Lead;
 use Illuminate\Support\Facades\Auth;
@@ -35,5 +36,18 @@ class AgentControllerGet extends Controller
     ->paginate(10);
 
     return view('agent.deals', compact('deals'));
+}
+
+
+
+public function getAgentActions()
+{  
+    $this->authorize('viewActionsAsAgent', Action::class);
+    $actions = Action::where('assigned_to', auth()->id())
+        ->with('lead')
+        ->latest('scheduled_time')
+        ->paginate(10);
+
+    return view('agent.actions', compact('actions'));
 }
 }
