@@ -9,7 +9,7 @@ class LeadPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->role === 'admin';
+        return in_array($user->role, ['admin', 'supervisor']);
     }
 
     public function view(User $user, Lead $lead): bool
@@ -30,7 +30,7 @@ class LeadPolicy
 
     public function update(User $user, Lead $lead): bool
     {
-        return $user->role === 'admin';
+        return in_array($user->role, ['admin', 'supervisor']);
     }
 
     public function delete(User $user, Lead $lead): bool

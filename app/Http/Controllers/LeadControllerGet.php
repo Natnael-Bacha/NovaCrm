@@ -7,6 +7,7 @@ use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Unit;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class LeadControllerGet extends Controller
 {
@@ -39,13 +40,54 @@ class LeadControllerGet extends Controller
 
         $projects = Project::all();
         $units = Unit::all();
-
-        return view('admin.leads', compact(
+      
+                    return view('admin.leads', compact(
             'agents',
             'leads',
             'projects',
             'units',
             'deals'
-        ));
+        ));   
+  
     }
+
+public function supervisorLeads()
+{
+    $this->authorize('viewAny', Lead::class);
+
+    $supervisor = Auth::user();
+
+    $agents = User::agentsUsers()
+        ->where('supervisor_id', $supervisor->id)
+        ->select('id', 'full_name')
+        ->orderBy('full_name')
+        ->get();
+
+    $leads = Lead::with('agent')
+        ->whereHas('agent', function ($query) use ($supervisor) {
+            $query->where('supervisor_id', $supervisor->id);
+        })
+
+        // Filter by stage
+        ->when(request('stage'), function ($query, $stage) {
+            $query->where('current_stage', $stage);
+        })
+
+        // Filter by agent
+        ->when(request('agent'), function ($query, $agentId) use ($supervisor) {
+            $query->where('agent_id', $agentId)
+                  ->whereHas('agent', function ($agentQuery) use ($supervisor) {
+                      $agentQuery->where('supervisor_id', $supervisor->id);
+                  });
+        })
+
+        ->orderBy('created_at', 'desc')
+        ->paginate(1, ['*'], 'leads_page')
+        ->withQueryString();
+
+    return view('supervisor.leads', compact(
+        'agents',
+        'leads'
+    ));
+}
 }

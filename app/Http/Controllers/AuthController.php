@@ -54,7 +54,7 @@ class AuthController extends Controller
 
             'admin' => redirect('/admin/dashboard'),
 
-            'supervisor' => redirect('/supervisor/dashboard'),
+            'supervisor' => redirect('/supervisor/leads'),
 
             'agent' => redirect('/agent/leads'),
 

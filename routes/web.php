@@ -50,12 +50,13 @@ Route::middleware('guest')->controller(AuthController::class)->group(function ()
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Lead Controllers
-Route::middleware(['auth', 'role:admin'])->controller(LeadControllerGet::class)->group(function () {
+Route::middleware(['auth', 'role:admin,supervisor'])->controller(LeadControllerGet::class)->group(function () {
     Route::get('/getLeads', 'getLeads')->name('admin.pipeline');
     Route::get('/admin/leads', 'index')->name('leads');
+    Route::get('/supervisor/leads', 'supervisorLeads')->name('supervisor.leads');
 });
 
-Route::middleware(['auth', 'role:admin'])->controller(LeadController::class)->group(function () {
+Route::middleware(['auth', 'role:admin,supervisor'])->controller(LeadController::class)->group(function () {
     Route::post('/createlead', 'createLead')->name('createLead');
     Route::put('/updateLead/{lead}', 'updateLead')->name('updateLead');
     Route::put('/updateLeadStatus/{lead}', 'updateLeadStatus')->name('updateLeadStatus');
@@ -106,7 +107,7 @@ Route::middleware(['auth', 'role:admin'])->controller(ActionController::class)->
     Route::put('/updateActionStatus/{action}', 'updateActionStatus')->name('updateActionStatus');
 });
 
-Route::middleware(['auth', 'role:admin'])->controller(ActionControllerGet::class)->group(function () {
+Route::middleware(['auth', 'role:admin,supervisor'])->controller(ActionControllerGet::class)->group(function () {
     Route::get('/admin/actions', 'getActions')->name('admin.actions');
 });
 

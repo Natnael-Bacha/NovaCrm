@@ -9,7 +9,7 @@ class ActionPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->role === 'admin';
+        return in_array($user->role, ['admin', 'supervisor']);
     }
 
     public function viewActionsAsAgent(User $user): bool
