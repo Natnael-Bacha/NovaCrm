@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreDealRequest extends FormRequest
 {
@@ -38,7 +39,7 @@ class StoreDealRequest extends FormRequest
 
             'collector_id' => [
                 'required',
-                'exists:users,id',
+                Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', 'collector')),
             ],
 
             'deal_amount' => [

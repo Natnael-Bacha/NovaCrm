@@ -12,7 +12,7 @@ class UnitControllerGet extends Controller
 
         $this->authorize('viewAny', Unit::class);
 
-        $units = Unit::paginate(2);
+        $units = Unit::paginate(5);
         $projects = Project::all();
 
         return view('admin.units', compact('units', 'projects'));

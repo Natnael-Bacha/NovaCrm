@@ -9,8 +9,7 @@
     </title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @livewireStyles
-    @filamentStyles
+    @fonts
     @stack('styles')
 </head>
 
@@ -34,7 +33,7 @@
                    transition-transform duration-300 ease-in-out
                    lg:relative lg:flex lg:flex-col
                    lg:h-screen lg:sticky lg:top-0"
-            style="background-color: #f8fafc; border-right: 1px solid #e2e8f0;"
+            style="background-color: #E8EEFC; border-right: 1px solid #d3ddf5;"
         >
 
             {{-- Logo --}}
@@ -98,7 +97,7 @@
                     href="{{ route('agent.leads') }}"
                     class="flex items-center gap-3 px-4 py-2.5 rounded-md text-sm font-medium transition-colors duration-150"
                     style="{{ $currentRoute == 'agent.leads'
-                        ? 'background-color: #0F286F; color: white;'
+                        ? 'background-color: white; color: #0F286F; font-weight: 600;'
                         : 'color: #475569;' }}"
                 >
                     
@@ -112,7 +111,7 @@
                     href="{{ route('agent.deals') }}"
                     class="flex items-center gap-3 px-4 py-2.5 rounded-md text-sm font-medium transition-colors duration-150"
                     style="{{ $currentRoute == 'agent.deals'
-                        ? 'background-color: #0F286F; color: white;'
+                        ? 'background-color: white; color: #0F286F; font-weight: 600;'
                         : 'color: #475569;' }}"
                 >
                     
@@ -126,7 +125,7 @@
                     href="{{ route('agent.actions') }}"
                     class="flex items-center gap-3 px-4 py-2.5 rounded-md text-sm font-medium transition-colors duration-150"
                     style="{{ $currentRoute == 'agent.actions'
-                        ? 'background-color: #0F286F; color: white;'
+                        ? 'background-color: white; color: #0F286F; font-weight: 600;'
                         : 'color: #475569;' }}"
                 >
                     
@@ -192,6 +191,7 @@
 
                 <button
                     onclick="toggleSidebar()"
+                    data-no-loading
                     class="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#0F286F]"
                 >
                     <svg
@@ -317,8 +317,71 @@
     </script>
 
 
-    @livewireScripts
-    @filamentScripts
+    <script>
+    (function() {
+        var SPINNER = '<svg class="animate-spin h-4 w-4 mr-2 inline-block" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>';
+
+        function mark(btn) {
+            if (btn.dataset.loading) return;
+            btn.dataset.loading = '1';
+            btn.dataset.originalHtml = btn.innerHTML;
+            btn.innerHTML = SPINNER + btn.innerHTML;
+        }
+
+        function restore(btn) {
+            if (!btn.dataset.loading) return;
+            btn.innerHTML = btn.dataset.originalHtml;
+            btn.disabled = false;
+            btn.style.pointerEvents = '';
+            delete btn.dataset.loading;
+            delete btn.dataset.originalHtml;
+        }
+
+        document.addEventListener('click', function(e) {
+            var btn = e.target.closest('button');
+            if (!btn || btn.disabled || btn.dataset.loading || btn.dataset.noLoading) return;
+            if (btn.closest('#sidebar') || btn.closest('#sidebarOverlay')) return;
+            if (btn.classList.contains('toast-close') || btn.classList.contains('modal-close') || btn.classList.contains('password-toggle')) return;
+            var text = btn.textContent.trim();
+            if (text === '✕' || text === '×') return;
+
+            var isSubmit = btn.type === 'submit';
+            var hasClick = btn.hasAttribute('onclick') || btn.hasAttribute('x-on:click') || btn.hasAttribute('@click');
+            if (!isSubmit && !hasClick) return;
+
+            mark(btn);
+
+            if (isSubmit) {
+                btn.style.pointerEvents = 'none';
+            } else {
+                btn.disabled = true;
+                btn.style.pointerEvents = 'none';
+                setTimeout(function() { restore(btn); }, 500);
+            }
+        });
+
+        document.addEventListener('submit', function(e) {
+            var btn = e.target.querySelector('button[data-loading="1"], input[type="submit"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.style.pointerEvents = 'none';
+            }
+        }, true);
+
+        var originalFetch = window.fetch;
+        window.fetch = function() {
+            var btns = Array.prototype.slice.call(document.querySelectorAll('button[data-loading="1"]'));
+            return originalFetch.apply(this, arguments).then(function(response) {
+                btns.forEach(restore);
+                return response;
+            }, function(err) {
+                btns.forEach(restore);
+                throw err;
+            });
+        };
+    })();
+    </script>
+
     @stack('scripts')
 
 </body>

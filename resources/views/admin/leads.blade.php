@@ -723,8 +723,8 @@
                         <div class="select-wrapper">
                             <select name="collector_id" x-model="dealForm.collector_id" required>
                                 <option value="">Select collector</option>
-                                <template x-for="agent in agents" :key="agent.id">
-                                    <option :value="agent.id" x-text="agent.full_name"></option>
+                                <template x-for="collector in collectors" :key="collector.id">
+                                    <option :value="collector.id" x-text="collector.full_name"></option>
                                 </template>
                             </select>
                         </div>
@@ -1021,6 +1021,7 @@
             leads: @json($leads->items() ?? []),
             totalLeadsCount: {{ $leads->total() }},
             agents: @json($agents ?? []),
+            collectors: @json($collectors ?? []),
             projects: @json($projects ?? []),
             units: @json($units ?? []),
             deals: @json($deals->items() ?? []), // deals are also paginated, but for hasDeal we only need current page; could be imperfect

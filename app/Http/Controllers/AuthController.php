@@ -21,6 +21,8 @@ class AuthController extends Controller
 
                 'agent' => redirect('/agent/dashboard'),
 
+                'collector' => redirect()->route('collector.deals'),
+
                 default => abort(403)
 
             };
@@ -57,6 +59,8 @@ class AuthController extends Controller
             'supervisor' => redirect('/supervisor/leads'),
 
             'agent' => redirect('/agent/leads'),
+
+            'collector' => redirect()->route('collector.deals'),
 
             default => abort(403)
 

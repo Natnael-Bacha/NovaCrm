@@ -11,7 +11,7 @@ class ProjectControllerGet extends Controller
 
         $this->authorize('viewAny', Project::class);
 
-        $projects = Project::paginate(2);
+        $projects = Project::paginate(5);
 
         return view('admin.projects', compact('projects'));
     }

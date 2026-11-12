@@ -4,8 +4,10 @@ use App\Http\Controllers\ActionController;
 use App\Http\Controllers\ActionControllerGet;
 use App\Http\Controllers\AgentControllerGet;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CollectorControllerGet;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\DealControllerGet;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LeadControllerGet;
 use App\Http\Controllers\ProjectController;
@@ -19,11 +21,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [AuthController::class, 'showLoginPage'])
     ->name('home');
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
-
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('adminDashboard');
+Route::middleware(['auth', 'role:admin'])->controller(DashboardController::class)->group(function () {
+    Route::get('/admin/dashboard', 'index')->name('adminDashboard');
 });
 
 // User Controllers
@@ -31,6 +30,7 @@ Route::middleware(['auth', 'role:admin'])->controller(UserController::class)->gr
 
     Route::post('/createUser', 'createUser')->name('createUser');
     Route::put('/updateUser/{user}', 'updateUser')->name('updateUser');
+    
     Route::put('/updateRole/{user}', 'updateRole')->name('updateRole');
     Route::put('/deleteUser/{user}', 'deleteUser')->name('deleteUser');
     Route::put('/changeSupervisors', 'changeSupervisors')->name('changeSupervisors');
@@ -104,17 +104,25 @@ Route::middleware(['auth', 'role:admin'])->controller(ActionController::class)->
     Route::put('/updateAction/{action}', 'updateAction')->name('updateAction');
     Route::delete('/deleteAction/{action}', 'deleteAction')->name('deleteAction');
     Route::put('/updateActionActivity/{action}', 'updateActionActivity')->name('updateActionActivity');
+});
+
+Route::middleware(['auth', 'role:admin,supervisor'])->controller(ActionController::class)->group(function () {
     Route::put('/updateActionStatus/{action}', 'updateActionStatus')->name('updateActionStatus');
 });
 
 Route::middleware(['auth', 'role:admin,supervisor'])->controller(ActionControllerGet::class)->group(function () {
     Route::get('/admin/actions', 'getActions')->name('admin.actions');
+    Route::get('/supervisor/actions', 'getActions')->middleware('role:supervisor')->name('supervisor.actions');
 });
 
 Route::middleware(['auth', 'role:agent'])->controller(AgentControllerGet::class)->group(function () {
     Route::get('/agent/leads', 'getAgentLeads')->name('agent.leads');
     Route::get('/agent/deals', 'getAgentDeals')->name('agent.deals');
     Route::get('/agent/actions', 'getAgentActions')->name('agent.actions');
+});
+
+Route::middleware(['auth', 'role:collector'])->controller(CollectorControllerGet::class)->group(function () {
+    Route::get('/collector/deals', 'getCollectorDeals')->name('collector.deals');
 });
 
 require __DIR__.'/settings.php';

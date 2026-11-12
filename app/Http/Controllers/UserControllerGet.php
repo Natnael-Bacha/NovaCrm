@@ -21,7 +21,7 @@ class UserControllerGet extends Controller
             ->get();
 
         $teams = User::orderBy('created_at', 'desc')
-            ->paginate(4);
+            ->paginate(5);
 
         return view('admin.team', compact(
             'supervisors',

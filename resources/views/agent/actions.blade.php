@@ -19,6 +19,39 @@
 
     </div>
 
+    {{-- Action Filters --}}
+    <form method="GET" action="{{ route('agent.actions') }}" class="mb-6 rounded-xl border border-gray-200 bg-white p-5">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
+            <div>
+                <label for="action-date" class="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">Scheduled Date</label>
+                <input id="action-date" type="date" name="date" value="{{ request('date') }}" onchange="this.form.requestSubmit()" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#0F286F] focus:outline-none focus:ring-1 focus:ring-[#0F286F]">
+            </div>
+
+            <div>
+                <label for="action-status" class="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">Status</label>
+                <select id="action-status" name="status" onchange="this.form.requestSubmit()" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#0F286F] focus:outline-none focus:ring-1 focus:ring-[#0F286F]">
+                    <option value="">All statuses</option>
+                    <option value="on_progress" @selected(request('status') === 'on_progress')>On Progress</option>
+                    <option value="done" @selected(request('status') === 'done')>Done</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="action-customer" class="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">Customer</label>
+                <select id="action-customer" name="customer" onchange="this.form.requestSubmit()" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#0F286F] focus:outline-none focus:ring-1 focus:ring-[#0F286F]">
+                    <option value="">All customers</option>
+                    @foreach ($customers as $customer)
+                        <option value="{{ $customer->id }}" @selected((string) request('customer') === (string) $customer->id)>{{ $customer->full_name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="{{ route('agent.actions') }}" class="text-sm font-medium text-gray-600 hover:text-[#0F286F]">Clear</a>
+            </div>
+        </div>
+    </form>
+
 
     {{-- Actions Table --}}
     <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
@@ -65,11 +98,11 @@
                 </div>
 
                 <h3 class="mt-4 text-sm font-semibold text-gray-800">
-                    No actions found
+                    {{ request()->hasAny(['date', 'status', 'customer']) ? 'No actions match these filters' : 'No actions found' }}
                 </h3>
 
                 <p class="mt-1 text-sm text-gray-500">
-                    You currently don't have any actions assigned to you.
+                    {{ request()->hasAny(['date', 'status', 'customer']) ? 'Try changing or clearing the selected filters.' : "You currently don't have any actions assigned to you." }}
                 </p>
 
             </div>

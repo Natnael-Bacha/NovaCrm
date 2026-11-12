@@ -206,3 +206,71 @@ it('allows an admin to change an action status from done to on progress', functi
         'status' => 'on_progress',
     ]);
 });
+
+it('allows a supervisor to update action status for their own agent', function () {
+    $supervisor = User::factory()->create(['role' => 'supervisor']);
+    $agent = User::factory()->create([
+        'role' => 'agent',
+        'supervisor_id' => $supervisor->id,
+    ]);
+    $lead = Lead::create([
+        'full_name' => 'Team Lead',
+        'phone' => '0912345101',
+        'lead_source' => 'website',
+        'lead_type' => 'buyer',
+        'current_stage' => 'new',
+        'agent_id' => $agent->id,
+    ]);
+    $action = Action::create([
+        'lead_id' => $lead->id,
+        'activity_type' => 'follow_up_call',
+        'assigned_to' => $agent->id,
+        'status' => 'on_progress',
+        'scheduled_time' => now()->addDay(),
+    ]);
+
+    $response = $this->actingAs($supervisor)->put(route('updateActionStatus', $action), [
+        'status' => 'done',
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success', 'Status updated successfully.');
+    $this->assertDatabaseHas('actions', [
+        'id' => $action->id,
+        'status' => 'done',
+    ]);
+});
+
+it('prevents a supervisor from updating an action assigned to another supervisors agent', function () {
+    $supervisor = User::factory()->create(['role' => 'supervisor']);
+    $otherSupervisor = User::factory()->create(['role' => 'supervisor']);
+    $agent = User::factory()->create([
+        'role' => 'agent',
+        'supervisor_id' => $otherSupervisor->id,
+    ]);
+    $lead = Lead::create([
+        'full_name' => 'Other Team Lead',
+        'phone' => '0912345102',
+        'lead_source' => 'website',
+        'lead_type' => 'buyer',
+        'current_stage' => 'new',
+        'agent_id' => $agent->id,
+    ]);
+    $action = Action::create([
+        'lead_id' => $lead->id,
+        'activity_type' => 'follow_up_call',
+        'assigned_to' => $agent->id,
+        'status' => 'on_progress',
+        'scheduled_time' => now()->addDay(),
+    ]);
+
+    $response = $this->actingAs($supervisor)->put(route('updateActionStatus', $action), [
+        'status' => 'done',
+    ]);
+
+    $response->assertForbidden();
+    $this->assertDatabaseHas('actions', [
+        'id' => $action->id,
+        'status' => 'on_progress',
+    ]);
+});

@@ -153,7 +153,7 @@
                                 <td class="px-6 py-4">
 
                                     <span class="text-sm font-medium text-gray-800">
-                                        {{ number_format($deal->deal_amount, 2) }}
+                                        ${{ number_format($deal->deal_amount, 2) }}
                                     </span>
 
                                 </td>
@@ -163,7 +163,7 @@
                                 <td class="px-6 py-4">
 
                                     <span class="text-sm text-gray-600">
-                                        {{ number_format($deal->down_payment, 2) }}
+                                        ${{ number_format($deal->down_payment, 2) }}
                                     </span>
 
                                 </td>
@@ -173,7 +173,7 @@
                                 <td class="px-6 py-4">
 
                                     <span class="text-sm text-gray-600">
-                                        {{ number_format($deal->installment_amount, 2) }}
+                                        ${{ number_format($deal->installment_amount, 2) }}
                                     </span>
 
                                 </td>
@@ -252,7 +252,7 @@
                                 </span>
 
                                 <span class="font-medium text-gray-800">
-                                    {{ number_format($deal->deal_amount, 2) }}
+                                    ${{ number_format($deal->deal_amount, 2) }}
                                 </span>
 
                             </div>
@@ -266,7 +266,7 @@
                                 </span>
 
                                 <span class="text-gray-600">
-                                    {{ number_format($deal->down_payment, 2) }}
+                                    ${{ number_format($deal->down_payment, 2) }}
                                 </span>
 
                             </div>
@@ -280,7 +280,7 @@
                                 </span>
 
                                 <span class="text-gray-600">
-                                    {{ number_format($deal->installment_amount, 2) }}
+                                    ${{ number_format($deal->installment_amount, 2) }}
                                 </span>
 
                             </div>

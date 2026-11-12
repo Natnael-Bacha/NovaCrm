@@ -122,6 +122,7 @@
                     </div>
 
                     <button
+                        id="signin-btn"
                         type="submit"
                         class="w-full bg-gray-950 text-white py-3 rounded-xl font-semibold hover:bg-gray-800 transition"
                     >
@@ -139,17 +140,14 @@
     <!-- Toggle password visibility script -->
     <script>
         (function() {
-            const toggleBtn = document.getElementById('toggle-password');
-            const passwordField = document.getElementById('password-field');
-            const eyeIcon = document.getElementById('eye-icon');
+            var toggleBtn = document.getElementById('toggle-password');
+            var passwordField = document.getElementById('password-field');
+            var eyeIcon = document.getElementById('eye-icon');
 
             if (toggleBtn && passwordField && eyeIcon) {
                 toggleBtn.addEventListener('click', function() {
-                    // toggle type
-                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    var type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
                     passwordField.setAttribute('type', type);
-
-                    // toggle icon
                     if (type === 'password') {
                         eyeIcon.classList.remove('fa-eye-slash');
                         eyeIcon.classList.add('fa-eye');
@@ -157,6 +155,18 @@
                         eyeIcon.classList.remove('fa-eye');
                         eyeIcon.classList.add('fa-eye-slash');
                     }
+                });
+            }
+
+            var signinBtn = document.getElementById('signin-btn');
+            if (signinBtn) {
+                signinBtn.closest('form').addEventListener('submit', function() {
+                    if (signinBtn.disabled) return;
+                    signinBtn.dataset.originalHtml = signinBtn.innerHTML;
+                    signinBtn.innerHTML = '<svg class="animate-spin h-4 w-4 mr-2 inline-block" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Signing in...';
+                    signinBtn.disabled = true;
+                    signinBtn.style.opacity = '0.7';
+                    signinBtn.style.pointerEvents = 'none';
                 });
             }
         })();

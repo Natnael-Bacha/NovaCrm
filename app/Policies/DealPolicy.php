@@ -17,6 +17,11 @@ class DealPolicy
         return $user->role === 'agent';
     }
 
+    public function viewDealsAsCollector(User $user): bool
+    {
+        return $user->role === 'collector';
+    }
+
     public function create(User $user): bool
     {
         return $user->role === 'admin';

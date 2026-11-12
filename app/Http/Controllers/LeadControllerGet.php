@@ -34,6 +34,11 @@ class LeadControllerGet extends Controller
             ->orderBy('full_name', 'desc')
             ->get();
 
+        $collectors = User::where('role', 'collector')
+            ->select('id', 'full_name')
+            ->orderBy('full_name')
+            ->get();
+
         $leads = Lead::with('agent')
             ->orderBy('created_at', 'desc')
             ->paginate(5, ['*'], 'leads_page');
@@ -43,6 +48,7 @@ class LeadControllerGet extends Controller
       
                     return view('admin.leads', compact(
             'agents',
+            'collectors',
             'leads',
             'projects',
             'units',
@@ -82,7 +88,7 @@ public function supervisorLeads()
         })
 
         ->orderBy('created_at', 'desc')
-        ->paginate(1, ['*'], 'leads_page')
+        ->paginate(5, ['*'], 'leads_page')
         ->withQueryString();
 
     return view('supervisor.leads', compact(

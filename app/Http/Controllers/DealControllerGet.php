@@ -17,7 +17,7 @@ class DealControllerGet extends Controller
             'collector',
         ])
             ->orderBy('created_at', 'desc')
-            ->paginate(2);
+            ->paginate(5);
 
         $deals->getCollection()->transform(function ($deal) {
             $deal->start_date = $deal->start_date

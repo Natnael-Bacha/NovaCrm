@@ -548,7 +548,7 @@
                                 </template>
                             </td>
                             <td class="px-6 py-4 table-cell-align">
-                                <span class="font-semibold text-slate-700" x-text="formatCurrency(deal.deal_amount) + ' ETB'"></span>
+                                <span class="font-semibold text-slate-700" x-text="'$' + formatCurrency(deal.deal_amount)"></span>
                             </td>
                             <td class="px-6 py-4 table-cell-align">
                                 <form method="POST" :action="`{{ url('/updateDealPaymentStatus') }}/${deal.id}`" class="payment-form">
@@ -747,15 +747,15 @@
                     <div class="space-y-4">
                         <div>
                             <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Deal Amount</label>
-                            <p class="text-2xl font-bold text-emerald-600" x-text="formatCurrency(viewDeal.deal_amount) + ' ETB'"></p>
+                            <p class="text-2xl font-bold text-emerald-600" x-text="'$' + formatCurrency(viewDeal.deal_amount)"></p>
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Down Payment</label>
-                            <p class="text-slate-700" x-text=" formatCurrency(viewDeal.down_payment) + ' ETB'"></p>
+                            <p class="text-slate-700" x-text="'$' + formatCurrency(viewDeal.down_payment)"></p>
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Installment Amount</label>
-                            <p class="text-slate-700" x-text=" formatCurrency(viewDeal.installment_amount) + ' ETB'"></p>
+                            <p class="text-slate-700" x-text="'$' + formatCurrency(viewDeal.installment_amount)"></p>
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Payment Cycle</label>
@@ -779,7 +779,7 @@
                             </div>
                             <div>
                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Commission Value</label>
-                                <p class="text-slate-700" x-text="viewDeal.commission_type === 'percentage' ? viewDeal.commission_value + '%' : 'ETB' + formatCurrency(viewDeal.commission_value)  + 'ETB'"></p>
+                                <p class="text-slate-700" x-text="viewDeal.commission_type === 'percentage' ? viewDeal.commission_value + '%' : '$' + formatCurrency(viewDeal.commission_value)"></p>
                             </div>
                             <div>
                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Beneficiary</label>

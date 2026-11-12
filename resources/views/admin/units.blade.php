@@ -155,7 +155,7 @@
                 </div>
                 <div class="text-right">
                     <p class="text-[10px] sm:text-xs text-gray-400">Price</p>
-                    <p class="text-base sm:text-lg font-bold text-[#0F286F]">ETB {{ number_format($unit->price, 2) }}</p>
+                    <p class="text-base sm:text-lg font-bold text-[#0F286F]">${{ number_format($unit->price, 2) }}</p>
                 </div>
             </div>
         </div>
@@ -310,7 +310,7 @@
                     <!-- Price -->
                     <div>
                         <label for="price" class="block mb-1.5 sm:mb-2 font-semibold text-[#0F286F] text-sm sm:text-base">
-                            Price (ETB) <span class="text-red-500">*</span>
+                            Price ($) <span class="text-red-500">*</span>
                         </label>
                         <input
                             id="price"
@@ -489,7 +489,7 @@
                     <!-- Price -->
                     <div>
                         <label for="edit_price" class="block mb-1.5 sm:mb-2 font-semibold text-[#0F286F] text-sm sm:text-base">
-                            Price (ETB) <span class="text-red-500">*</span>
+                            Price ($) <span class="text-red-500">*</span>
                         </label>
                         <input
                             id="edit_price"

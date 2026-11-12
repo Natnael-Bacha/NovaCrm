@@ -27,6 +27,16 @@ class ActionPolicy
         return $user->role === 'admin';
     }
 
+    public function updateStatus(User $user, Action $action): bool
+    {
+        return $user->role === 'admin'
+            || ($user->role === 'supervisor'
+                && $action->assignedUser()
+                    ->where('role', 'agent')
+                    ->where('supervisor_id', $user->id)
+                    ->exists());
+    }
+
     public function delete(User $user, Action $action): bool
     {
         return $user->role === 'admin';

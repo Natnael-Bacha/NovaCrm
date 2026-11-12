@@ -75,7 +75,7 @@ class ActionController extends Controller
 
     public function updateActionStatus(UpdateActionStatusRequest $request, Action $action)
     {
-        $this->authorize('update', $action);
+        $this->authorize('updateStatus', $action);
         $validated = $request->validated();
 
         $action->update([
